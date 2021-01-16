@@ -46,8 +46,8 @@ const FavCities = ({ navigation, favCities }) => {
         <DisplayError message="Impossible de récupérer les villes" />
       ) : (
         <FlatList
-          data={restaurants}
-          extraData={favRestaurants}
+          data={cities}
+          extraData={favCities}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <CityListItem

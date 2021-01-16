@@ -1,20 +1,12 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  ActivityIndicator,
-  Text,
-  Button,
-} from "react-native";
+import { View, StyleSheet, Text, Button } from "react-native";
 import Colors from "../definitions/Colors.js";
-import DisplayError from "./DisplayError";
-import { ScrollView } from "react-native-gesture-handler";
 import { connect } from "react-redux";
-import { getWeatherByCityId } from "../api/openweather.js";
+import * as API from "../api/openweather.js";
 
 const City = ({ route, favCities, dispatch }) => {
   useEffect(() => {
-    console.log("In useEffect!");
+    requestCity();
   }, []);
 
   const [city, setCity] = useState(null);
@@ -55,7 +47,7 @@ const City = ({ route, favCities, dispatch }) => {
 
   const requestCity = async () => {
     try {
-      const cityResult = await getWeatherByCityId(route.params.cityID);
+      const cityResult = await API.getWeatherByCityId(route.params.cityID);
       setCity(cityResult);
       setIsLoading(false);
     } catch (error) {
@@ -73,57 +65,7 @@ const City = ({ route, favCities, dispatch }) => {
 
   return (
     <View style={styles.container}>
-      {isError ? (
-        <DisplayError message="Impossible de récupérer les données du restaurants" />
-      ) : isLoading ? (
-        <View style={styles.containerLoading}>
-          <ActivityIndicator size="large" />
-        </View>
-      ) : (
-        <ScrollView style={styles.container}>
-          <View style={styles.innerContainer}>
-            {getThumbnail()}
-            <View style={styles.identityContainerTop}>
-              <View style={styles.identityRestaurant}>
-                <Text style={styles.name}>{restaurant.name}</Text>
-                <Text style={styles.content} numberOfLines={1}>
-                  {restaurant.establishment.join()}
-                </Text>
-              </View>
-              <View style={styles.reviewRestaurant}>
-                <View
-                  style={[
-                    styles.containerNote,
-                    {
-                      backgroundColor:
-                        "#" + restaurant.user_rating.rating_color,
-                    },
-                  ]}
-                >
-                  <Text style={styles.textNote}>
-                    {restaurant.user_rating.aggregate_rating}
-                  </Text>
-                  <Text style={styles.textMaxNote}>/5</Text>
-                </View>
-                <Text style={styles.textVotes}>
-                  {restaurant.user_rating.votes} votes
-                </Text>
-              </View>
-            </View>
-            <View style={styles.identityContainerBottom}>
-              <Text style={[styles.title, { marginTop: 0 }]}>Cuisines</Text>
-              <Text style={styles.content}>{restaurant.cuisines}</Text>
-              <Text style={styles.title}>Numéro(s) de téléphone</Text>
-              <Text style={styles.content}>{restaurant.phone_numbers}</Text>
-              <Text style={styles.title}>Adresse</Text>
-              <Text style={styles.content}>{restaurant.location.address}</Text>
-              <Text style={styles.title}>Horaires d'ouverture</Text>
-              {getTimings()}
-              {displaySaveRestaurant()}
-            </View>
-          </View>
-        </ScrollView>
-      )}
+      <Text>Je suis une ville!</Text>
     </View>
   );
 };
