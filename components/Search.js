@@ -187,7 +187,7 @@ const Search = ({ navigation, favCities }) => {
 
 const mapStateToProps = (state) => {
   return {
-    favCities: state.favoriteCitiesIds,
+    favCities: state.favCitiesReducer.favoriteCitiesIds,
   };
 };
 

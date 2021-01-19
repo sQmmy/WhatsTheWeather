@@ -11,5 +11,7 @@
   "menuTopFav": "Followed",
   "menuTopCity": "City",
   "menuBottomSearch": "Search",
-  "menuBottomFav": "Followed"
+  "menuBottomFav": "Followed",
+  "appName": "WhatsMyWeather",
+  "welcomeMessageApp": "Your best friend to check the weather"
 }

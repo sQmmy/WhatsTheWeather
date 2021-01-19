@@ -11,5 +11,7 @@
   "menuTopFav": "Favoris",
   "menuTopCity": "Ville",
   "menuBottomSearch": "Recherche",
-  "menuBottomFav": "Favoris"
+  "menuBottomFav": "Favoris",
+  "appName": "WhatsMyWeather",
+  "welcomeMessageApp": "Votre compagnon de poche pour la météo"
 }
