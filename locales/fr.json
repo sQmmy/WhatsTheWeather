@@ -1,0 +1,15 @@
+{
+  "location": "Emplacement",
+  "cityNameInput": "Nom de la ville",
+  "stateNameInput": "Code de l'état",
+  "countryCodeInput": "Code postal",
+  "searchButton": "Rechercher",
+  "locateButton": "Localisez-moi",
+  "resultsHeader": "Résultats",
+  "apiError": "Impossible de récupérer les données",
+  "menuTopSearch": "Recherche",
+  "menuTopFav": "Favoris",
+  "menuTopCity": "Ville",
+  "menuBottomSearch": "Recherche",
+  "menuBottomFav": "Favoris"
+}

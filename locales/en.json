@@ -1,0 +1,15 @@
+{
+  "location": "Location",
+  "cityNameInput": "City name",
+  "stateNameInput": "State name",
+  "countryCodeInput": "Country code",
+  "searchButton": "Search",
+  "locateButton": "Locate me",
+  "resultsHeader": "Results",
+  "apiError": "Error while fetching data",
+  "menuTopSearch": "Search",
+  "menuTopFav": "Followed",
+  "menuTopCity": "City",
+  "menuBottomSearch": "Search",
+  "menuBottomFav": "Followed"
+}

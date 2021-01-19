@@ -1,7 +1,6 @@
 import * as Location from "expo-location";
 import React, { useEffect, useState } from "react";
 import {
-  Button,
   TextInput,
   View,
   Text,
@@ -12,10 +11,12 @@ import {
 } from "react-native";
 import Colors from "../definitions/Colors";
 import DisplayError from "./DisplayError";
-import { connect } from "react-redux";
 import CityListItem from "../components/CityListItem";
 import * as API from "../api/openweather";
-import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
+import { connect } from "react-redux";
+import i18n from "i18n-js";
 
 const Search = ({ navigation, favCities }) => {
   const [cities, setCities] = useState([]);
@@ -27,6 +28,14 @@ const Search = ({ navigation, favCities }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [location, setLocation] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      if (location !== null) {
+        await requestCitiesByLatLon();
+      }
+    })();
+  }, [location]);
 
   const isFavoriteCity = (cityId) => {
     if (favCities.findIndex((i) => i === cityId) !== -1) {
@@ -40,14 +49,18 @@ const Search = ({ navigation, favCities }) => {
   };
 
   const locateMe = async () => {
+    setIsLoading(true);
+    let loc = await requestLocationToDevice();
+    setLocation(loc);
+  };
+
+  const requestLocationToDevice = async () => {
     let { status } = await Location.requestPermissionsAsync();
     if (status !== "granted") {
       setErrorMsg("Vous n'avez pas donné les permissions de localisation");
       return;
     }
-    let location = await Location.getCurrentPositionAsync({});
-    setLocation(location);
-    requestCitiesByLatLon();
+    return await Location.getCurrentPositionAsync({});
   };
 
   const requestCities = async () => {
@@ -68,9 +81,7 @@ const Search = ({ navigation, favCities }) => {
   };
 
   const requestCitiesByLatLon = async () => {
-    setIsLoading(true);
     setIsError(false);
-    setCities([]);
     try {
       const searchResult = await API.getWeatherByLatLon(
         location.coords.latitude,
@@ -85,24 +96,26 @@ const Search = ({ navigation, favCities }) => {
 
   const searchCities = () => {
     Keyboard.dismiss();
-    requestCities();
+    if (cityName.length > 0) {
+      requestCities();
+    }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Emplacement</Text>
+      <Text style={styles.title}>{i18n.t("location")}</Text>
       <View style={styles.searchContainer}>
         <View style={styles.topSearchInput}>
           <View style={styles.elementInput}>
             <TextInput
-              placeholder="Nom de la ville"
-              style={{}}
+              placeholder={i18n.t("cityNameInput")}
+              style={styles.input}
               onChangeText={(text) => setCityName(text)}
             />
           </View>
           <View style={styles.elementInput}>
             <TextInput
-              placeholder="Code de l'état"
+              placeholder={i18n.t("stateNameInput")}
               style={styles.input}
               onChangeText={(text) => setStateCode(text)}
             />
@@ -112,7 +125,7 @@ const Search = ({ navigation, favCities }) => {
         <View style={styles.bottomSearchInput}>
           <View style={styles.elementInput}>
             <TextInput
-              placeholder="Code du pays"
+              placeholder={i18n.t("countryCodeInput")}
               style={styles.input}
               onChangeText={(text) => setCountryCode(text)}
             />
@@ -125,8 +138,9 @@ const Search = ({ navigation, favCities }) => {
               disabled={cityName.length < 1}
               backgroundColor={Colors.mainBlue}
               onPress={searchCities}
+              style={cityName.length < 1 ? styles.disabledButton : ""}
             >
-              Rechercher
+              {i18n.t("searchButton")}
             </FontAwesome.Button>
           </View>
           <View style={styles.buttonStyle}>
@@ -135,19 +149,22 @@ const Search = ({ navigation, favCities }) => {
               backgroundColor={Colors.mainBlue}
               onPress={locateMe}
             >
-              Localisez-moi
+              {i18n.t("locateButton")}
             </FontAwesome.Button>
           </View>
         </View>
       </View>
 
-      <Text style={styles.title}>Résultats</Text>
+      <Text style={styles.title}>
+        {cities.length != 0 ? i18n.t("resultsHeader") : ""}
+      </Text>
 
       {isError ? (
-        <DisplayError message="Impossible de récupérer les données" />
+        <DisplayError message={translation?.apiError} />
       ) : isLoading ? (
-        <View style={styles.containerLoading}>
-          <ActivityIndicator size="large" />
+        <View style={styles.loader}>
+          <BlurView intensity={250} style={StyleSheet.absoluteFill} />
+          <ActivityIndicator color={Colors.mainBlue} size="large" />
         </View>
       ) : (
         <FlatList
@@ -191,6 +208,18 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: 5,
     alignItems: "center",
+  },
+  disabledButton: {
+    backgroundColor: "gray",
+  },
+  loader: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
     fontSize: 28,
