@@ -12,6 +12,10 @@
   "menuTopCity": "City",
   "menuBottomSearch": "Search",
   "menuBottomFav": "Followed",
-  "appName": "WhatsMyWeather",
-  "welcomeMessageApp": "Your best friend to check the weather"
+  "appName": "WhatsTheWeather",
+  "welcomeMessageApp": "Your best friend to check the weather",
+  "authorName": "Geoffrey Bauqué",
+  "courseName": "Mobile development",
+  "notFound": "Not found!",
+  "locatePermissionNotProvided": "Locate permission not provided!"
 }

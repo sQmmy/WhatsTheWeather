@@ -27,9 +27,9 @@ const Navigation = ({ language, dispatch }) => {
 
   function searchStackScreens() {
     return (
-      <SearchNavigation.Navigator initialRouteName="ViewSearch">
+      <SearchNavigation.Navigator initialRouteName='ViewSearch'>
         <SearchNavigation.Screen
-          name="ViewSearch"
+          name='ViewSearch'
           component={Search}
           options={{
             headerTitle: i18n.t("menuTopSearch"),
@@ -42,15 +42,15 @@ const Navigation = ({ language, dispatch }) => {
                     dispatch({ type: "CHANGE_LANGUAGE", value: itemValue });
                   }}
                 >
-                  <Picker.Item label="🇫🇷 Français" value="fr" />
-                  <Picker.Item label="🇬🇧 English" value="en" />
+                  <Picker.Item label='🇫🇷 Français' value='fr' />
+                  <Picker.Item label='🇬🇧 English' value='en' />
                 </Picker>
               </View>
             ),
           }}
         />
         <SearchNavigation.Screen
-          name="ViewCity"
+          name='ViewCity'
           component={City}
           options={{ title: i18n.t("menuTopCity") }}
         />
@@ -60,14 +60,14 @@ const Navigation = ({ language, dispatch }) => {
 
   function favStackScreens() {
     return (
-      <FavNavigation.Navigator initialRouteName="ViewFav">
+      <FavNavigation.Navigator initialRouteName='ViewFav'>
         <FavNavigation.Screen
-          name="ViewFav"
+          name='ViewFav'
           component={FavCities}
           options={{ title: i18n.t("menuTopFav") }}
         />
         <FavNavigation.Screen
-          name="ViewCity"
+          name='ViewCity'
           component={City}
           options={{ title: i18n.t("menuTopCity") }}
         />

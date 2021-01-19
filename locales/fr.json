@@ -12,6 +12,10 @@
   "menuTopCity": "Ville",
   "menuBottomSearch": "Recherche",
   "menuBottomFav": "Favoris",
-  "appName": "WhatsMyWeather",
-  "welcomeMessageApp": "Votre compagnon de poche pour la météo"
+  "appName": "WhatsTheWeather",
+  "welcomeMessageApp": "Votre compagnon de poche pour la météo",
+  "authorName": "Geoffrey Bauqué",
+  "courseName": "Développement Mobile",
+  "notFound": "Pas de résultat!",
+  "locatePermissionNotProvided": "Vous n'avez pas autorisé la localisation!"
 }

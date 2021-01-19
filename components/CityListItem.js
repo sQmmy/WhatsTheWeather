@@ -1,38 +1,26 @@
 import React from "react";
-import {
-  View,
-  StyleSheet,
-  Image,
-  Text,
-  TouchableOpacity,
-  FlatList,
-} from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import Colors from "../definitions/Colors";
-import Assets from "../definitions/Assets";
 import Flag from "react-native-flags";
 
-const CityListItem = ({ onClick, isFav = false, cityData }) => {
+const CityListItem = ({ onClick, isFav = false, city }) => {
   return (
     <TouchableOpacity
       style={styles.container}
       onPress={() => {
-        onClick(cityData.id);
+        onClick(city.id);
       }}
     >
       <View style={styles.informationContainer}>
         <View style={styles.cityHeader}>
           <Text style={styles.title}>
-            {cityData.name}, {cityData.sys.country}
+            {city.name}, {city.sys.country}
           </Text>
-          <Flag
-            style={styles.flagStyle}
-            code={cityData.sys.country}
-            size={32}
-          />
+          <Flag style={styles.flagStyle} code={city.sys.country} size={32} />
         </View>
-        <Text style={styles.data}>Humidité : {cityData.main.humidity}</Text>
-        <Text style={styles.data}>Pression : {cityData.main.pressure}</Text>
-        <Text style={styles.data}>Température : {cityData.main.temp}</Text>
+        <Text style={styles.data}>Humidité : {city.main.humidity}</Text>
+        <Text style={styles.data}>Pression : {city.main.pressure}</Text>
+        <Text style={styles.data}>Température : {city.main.temp}</Text>
       </View>
     </TouchableOpacity>
   );

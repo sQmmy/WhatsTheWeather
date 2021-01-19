@@ -16,6 +16,7 @@ export default class App extends React.Component {
     appIsReady: false,
     fadeTextAnimation: new Animated.Value(0),
     imageSize: new Animated.Value(1),
+    imageOpacity: new Animated.Value(4),
   };
 
   breathAnimation = () => {
@@ -28,7 +29,7 @@ export default class App extends React.Component {
           useNativeDriver: true,
         }),
         Animated.timing(this.state.imageSize, {
-          toValue: 0.7,
+          toValue: 0.95,
           duration: 500,
           easing: Easing.in(Easing.sin),
           useNativeDriver: true,
@@ -49,6 +50,14 @@ export default class App extends React.Component {
     this.breathAnimation();
   };
 
+  imageFadeOut = () => {
+    Animated.timing(this.state.imageOpacity, {
+      toValue: 0,
+      useNativeDriver: true,
+      duration: 2000,
+    }).start();
+  };
+
   fadeOut = () => {
     Animated.timing(this.state.fadeTextAnimation, {
       toValue: 0,
@@ -57,6 +66,7 @@ export default class App extends React.Component {
     }).start(() => {
       this.onAnimationFinished();
     });
+    this.imageFadeOut();
   };
 
   onAnimationFinished = () => {
@@ -84,6 +94,7 @@ export default class App extends React.Component {
               style={[
                 styles.splashScreen,
                 {
+                  opacity: this.state.imageOpacity,
                   transform: [{ scale: this.state.imageSize }],
                 },
               ]}
@@ -108,6 +119,26 @@ export default class App extends React.Component {
           >
             <Text style={styles.appMessage}>{i18n.t("welcomeMessageApp")}</Text>
           </Animated.View>
+          <View style={styles.authorContainer}>
+            <Animated.View
+              style={[
+                {
+                  opacity: this.state.fadeTextAnimation,
+                },
+              ]}
+            >
+              <Text style={styles.authorChild}>{i18n.t("authorName")}</Text>
+            </Animated.View>
+            <Animated.View
+              style={[
+                {
+                  opacity: this.state.fadeTextAnimation,
+                },
+              ]}
+            >
+              <Text style={styles.authorChild}>{i18n.t("courseName")}</Text>
+            </Animated.View>
+          </View>
         </View>
       );
     }
@@ -117,7 +148,7 @@ export default class App extends React.Component {
         <PersistGate loading={null} persistor={Persistor}>
           <NavigationContainer>
             <Navigation />
-            <StatusBar style="auto" />
+            <StatusBar style='auto' />
           </NavigationContainer>
         </PersistGate>
       </Provider>
@@ -130,6 +161,19 @@ const styles = StyleSheet.create({
   splashContainer: {
     width: 200,
     height: 150,
+  },
+  authorContainer: {
+    bottom: 30,
+    position: "absolute",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  authorChild: {
+    fontSize: 16,
+    color: "white",
+    textShadowOffset: { width: 2, height: 2 },
+    fontWeight: "bold",
+    marginHorizontal: 20,
   },
   splashTopContainer: {
     alignItems: "center",
@@ -147,7 +191,7 @@ const styles = StyleSheet.create({
   },
   appMessage: {
     fontStyle: "italic",
-    fontSize: 16,
+    fontSize: 18,
     color: "white",
   },
 });

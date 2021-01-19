@@ -16,10 +16,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
   },
   icon: {
-    tintColor: Colors.mainGreen,
+    tintColor: Colors.mainBlue,
   },
   errorText: {
     fontSize: 16,

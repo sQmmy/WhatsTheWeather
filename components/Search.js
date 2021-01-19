@@ -27,6 +27,7 @@ const Search = ({ navigation, favCities }) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const [location, setLocation] = useState(null);
 
   useEffect(() => {
@@ -51,30 +52,39 @@ const Search = ({ navigation, favCities }) => {
   const locateMe = async () => {
     setIsLoading(true);
     let loc = await requestLocationToDevice();
-    setLocation(loc);
+    if (loc != null) {
+      setLocation(loc);
+    }
   };
 
   const requestLocationToDevice = async () => {
-    let { status } = await Location.requestPermissionsAsync();
-    if (status !== "granted") {
-      setErrorMsg("Vous n'avez pas donné les permissions de localisation");
-      return;
+    try {
+      await Location.requestPermissionsAsync();
+      return await Location.getCurrentPositionAsync({});
+    } catch (error) {
+      setErrorMsg("locatePermissionNotProvided");
+      setIsError(true);
     }
-    return await Location.getCurrentPositionAsync({});
   };
 
   const requestCities = async () => {
     setIsLoading(true);
     setIsError(false);
-    setCities([]);
     try {
       const searchResult = await API.getWeatherByCity(
         cityName,
         stateCode,
         countryCode
       );
-      setCities([searchResult]);
+      setCities([]);
+      if (searchResult.cod == 404) {
+        setErrorMsg("notFound");
+        setIsError(true);
+      } else {
+        setCities([searchResult]);
+      }
     } catch (error) {
+      setErrorMsg("apiError");
       setIsError(true);
     }
     setIsLoading(false);
@@ -87,8 +97,10 @@ const Search = ({ navigation, favCities }) => {
         location.coords.latitude,
         location.coords.longitude
       );
+
       setCities([searchResult]);
     } catch (error) {
+      setErrorMsg("apiError");
       setIsError(true);
     }
     setIsLoading(false);
@@ -134,7 +146,7 @@ const Search = ({ navigation, favCities }) => {
         <View style={styles.buttonContainer}>
           <View style={styles.buttonStyle}>
             <FontAwesome.Button
-              name="search"
+              name='search'
               disabled={cityName.length < 1}
               backgroundColor={Colors.mainBlue}
               onPress={searchCities}
@@ -145,7 +157,7 @@ const Search = ({ navigation, favCities }) => {
           </View>
           <View style={styles.buttonStyle}>
             <FontAwesome.Button
-              name="map-marker"
+              name='map-marker'
               backgroundColor={Colors.mainBlue}
               onPress={locateMe}
             >
@@ -160,11 +172,11 @@ const Search = ({ navigation, favCities }) => {
       </Text>
 
       {isError ? (
-        <DisplayError message={translation?.apiError} />
+        <DisplayError message={i18n.t(errorMsg)} />
       ) : isLoading ? (
         <View style={styles.loader}>
           <BlurView intensity={250} style={StyleSheet.absoluteFill} />
-          <ActivityIndicator color={Colors.mainBlue} size="large" />
+          <ActivityIndicator color={Colors.mainBlue} size='large' />
         </View>
       ) : (
         <FlatList
@@ -172,7 +184,7 @@ const Search = ({ navigation, favCities }) => {
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <CityListItem
-              cityData={item}
+              city={item}
               onClick={navigateToCityDetails}
               isFav={isFavoriteCity(item.id)}
             />
@@ -209,6 +221,10 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     alignItems: "center",
   },
+  buttonStyle: {
+    width: 180,
+    marginTop: 10,
+  },
   disabledButton: {
     backgroundColor: "gray",
   },
@@ -231,11 +247,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginHorizontal: 20,
-  },
-  buttonStyle: {
-    flex: 1,
-    width: 180,
-    marginVertical: 10,
   },
   bottomSearchInput: {
     alignItems: "center",
