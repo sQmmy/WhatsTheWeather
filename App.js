@@ -6,51 +6,108 @@ import { Persistor, Store } from "./store/config";
 import { NavigationContainer } from "@react-navigation/native";
 import Navigation from "./navigation/Navigation";
 import * as SplashScreen from "expo-splash-screen";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Animated, Easing, Image, StyleSheet, Text, View } from "react-native";
 import i18n from "i18n-js";
+
+const AnimatedImage = Animated.createAnimatedComponent(Image);
 
 export default class App extends React.Component {
   state = {
     appIsReady: false,
+    fadeTextAnimation: new Animated.Value(0),
+    imageSize: new Animated.Value(1),
+  };
+
+  breathAnimation = () => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(this.state.imageSize, {
+          toValue: 1,
+          duration: 500,
+          easing: Easing.out(Easing.sin),
+          useNativeDriver: true,
+        }),
+        Animated.timing(this.state.imageSize, {
+          toValue: 0.7,
+          duration: 500,
+          easing: Easing.in(Easing.sin),
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  };
+
+  fadeIn = () => {
+    Animated.timing(this.state.fadeTextAnimation, {
+      toValue: 4,
+      useNativeDriver: true,
+      duration: 2000,
+      delay: 500,
+    }).start(() => {
+      this.fadeOut();
+    });
+    this.breathAnimation();
+  };
+
+  fadeOut = () => {
+    Animated.timing(this.state.fadeTextAnimation, {
+      toValue: 0,
+      useNativeDriver: true,
+      duration: 2000,
+    }).start(() => {
+      this.onAnimationFinished();
+    });
+  };
+
+  onAnimationFinished = () => {
+    this.setState({ appIsReady: true }, async () => {
+      await SplashScreen.hideAsync();
+    });
   };
 
   async componentDidMount() {
     // Prevent native splash screen from autohiding
     try {
       await SplashScreen.preventAutoHideAsync();
+      this.fadeIn();
     } catch (e) {
       console.warn(e);
     }
-    this.prepareResources();
   }
-
-  /**
-   * Method that serves to load resources and make API calls
-   */
-  prepareResources = async () => {
-    try {
-      setTimeout(() => {
-        this.setState({ appIsReady: true }, async () => {
-          await SplashScreen.hideAsync();
-        });
-      }, 5000);
-    } catch (e) {
-      console.warn(e);
-    }
-  };
 
   render() {
     if (!this.state.appIsReady) {
       return (
         <View style={styles.splashTopContainer}>
           <View style={styles.splashContainer}>
-            <Image
+            <AnimatedImage
+              style={[
+                styles.splashScreen,
+                {
+                  transform: [{ scale: this.state.imageSize }],
+                },
+              ]}
               source={require("./assets/cloudy.png")}
-              style={styles.splashScreen}
             />
           </View>
-          <Text style={styles.appTitle}>{i18n.t("appName")}</Text>
-          <Text style={styles.appMessage}>{i18n.t("welcomeMessageApp")}</Text>
+          <Animated.View
+            style={[
+              {
+                opacity: this.state.fadeTextAnimation,
+              },
+            ]}
+          >
+            <Text style={styles.appTitle}>{i18n.t("appName")}</Text>
+          </Animated.View>
+          <Animated.View
+            style={[
+              {
+                opacity: this.state.fadeTextAnimation,
+              },
+            ]}
+          >
+            <Text style={styles.appMessage}>{i18n.t("welcomeMessageApp")}</Text>
+          </Animated.View>
         </View>
       );
     }
