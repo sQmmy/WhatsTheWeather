@@ -1,82 +1,37 @@
-import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Text, Button } from "react-native";
+import React from "react";
+import { View, StyleSheet } from "react-native";
 import Colors from "../definitions/Colors.js";
 import { connect } from "react-redux";
-import * as API from "../api/openweather.js";
+import { Picker } from "@react-native-picker/picker";
 
-const City = ({ route, favCities, dispatch }) => {
-  useEffect(() => {
-    requestCity();
-  }, []);
-
-  const [city, setCity] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
-
-  const saveCity = async () => {
-    const action = {
-      type: "SAVE_CITY",
-      value: route.params.cityID,
-    };
-    dispatch(action);
-  };
-
-  const unsaveCity = async () => {
-    const action = { type: "POP_CITY", value: route.params.cityID };
-    dispatch(action);
-  };
-
-  const displaySaveCity = () => {
-    if (favCities.findIndex((i) => i === route.params.cityID) !== -1) {
-      return (
-        <Button
-          title="Retirer des favoris"
-          color={Colors.mainGreen}
-          onPress={unsaveCity}
-        />
-      );
-    }
-    return (
-      <Button
-        title="Ajouter aux favoris"
-        color={Colors.mainGreen}
-        onPress={saveCity}
-      />
-    );
-  };
-
-  const requestCity = async () => {
-    try {
-      const cityResult = await API.getWeatherByCityId(route.params.cityID);
-      setCity(cityResult);
-      setIsLoading(false);
-    } catch (error) {
-      setIsError(true);
-    }
-  };
-
-  const getCityBackground = () => {
-    return (
-      <View>
-        <Text>City Background???</Text>
-      </View>
-    );
+const SettingsScreen = ({ language, dispatch }) => {
+  const changeLang = (itemValue) => {
+    dispatch({ type: "CHANGE_LANGUAGE", value: itemValue });
   };
 
   return (
     <View style={styles.container}>
-      <Text>Je suis une ville!</Text>
+      <Picker
+        selectedValue={language}
+        style={{ height: 60, width: 150 }}
+        onValueChange={(itemValue) => {
+          changeLang(itemValue);
+        }}
+      >
+        <Picker.Item label='🇫🇷 Français' value='fr' />
+        <Picker.Item label='🇬🇧 English' value='en' />
+      </Picker>
     </View>
   );
 };
 
 const mapStateToProps = (state) => {
   return {
-    favCities: state.favoriteCitiesIds,
+    language: state.userPreference.location,
   };
 };
 
-export default connect(mapStateToProps)(City);
+export default connect(mapStateToProps)(SettingsScreen);
 
 const styles = StyleSheet.create({
   container: {

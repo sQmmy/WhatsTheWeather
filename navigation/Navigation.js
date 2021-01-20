@@ -1,22 +1,24 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Search from "../components/Search";
-import Assets from "../definitions/Assets";
-import Colors from "../definitions/Colors";
-import { Image, StyleSheet, View } from "react-native";
-import City from "../components/City";
-import FavCities from "../components/FavCities";
+import {
+  createDrawerNavigator,
+  DrawerContentScrollView,
+  DrawerItem,
+} from "@react-navigation/drawer";
+import { SafeAreaView, StyleSheet, View } from "react-native";
 import * as Localization from "expo-localization";
-import { Picker } from "@react-native-picker/picker";
 import { connect } from "react-redux";
 import i18n from "i18n-js";
+import { FontAwesome } from "@expo/vector-icons";
+import CityScreen from "../screens/CityScreen";
+import FavCitiesScreen from "../screens/FavCitiesScreen";
+import SearchScreen from "../screens/SearchScreen";
+import SettingsScreen from "../screens/SettingsScreen";
 
 const SearchNavigation = createStackNavigator();
-const FavNavigation = createStackNavigator();
-const TabNavigation = createBottomTabNavigator();
+const DrawerNavigation = createDrawerNavigator();
 
-const Navigation = ({ language, dispatch }) => {
+const Navigation = ({ language }) => {
   i18n.translations = {
     fr: require("../locales/fr.json"),
     en: require("../locales/en.json"),
@@ -25,88 +27,126 @@ const Navigation = ({ language, dispatch }) => {
   i18n.locale = language || Localization.locale;
   i18n.fallbacks = true;
 
-  function searchStackScreens() {
+  const NavigationDrawerStructure = (props) => {
+    const toggleDrawer = () => {
+      props.navigationProps.toggleDrawer();
+    };
+
     return (
-      <SearchNavigation.Navigator initialRouteName='ViewSearch'>
+      <View style={{ flexDirection: "row" }}>
+        <FontAwesome.Button
+          onPress={() => toggleDrawer()}
+          name='bars'
+          backgroundColor={"white"}
+          color={"black"}
+          style={{ marginLeft: 8 }}
+        ></FontAwesome.Button>
+      </View>
+    );
+  };
+
+  function searchStackScreens({ navigation }) {
+    return (
+      <SearchNavigation.Navigator initialRouteName='ViewSearchScreen'>
         <SearchNavigation.Screen
-          name='ViewSearch'
-          component={Search}
+          name='ViewSearchScreen'
+          component={SearchScreen}
           options={{
             headerTitle: i18n.t("menuTopSearch"),
-            headerRight: () => (
-              <View style={styles.buttonPlacement}>
-                <Picker
-                  selectedValue={language}
-                  style={{ height: 60, width: 150 }}
-                  onValueChange={(itemValue) => {
-                    dispatch({ type: "CHANGE_LANGUAGE", value: itemValue });
-                  }}
-                >
-                  <Picker.Item label='🇫🇷 Français' value='fr' />
-                  <Picker.Item label='🇬🇧 English' value='en' />
-                </Picker>
-              </View>
+            headerLeft: () => (
+              <NavigationDrawerStructure navigationProps={navigation} />
             ),
           }}
         />
         <SearchNavigation.Screen
-          name='ViewCity'
-          component={City}
-          options={{ title: i18n.t("menuTopCity") }}
+          name='ViewCityScreen'
+          component={CityScreen}
+          options={{
+            headerTitle: i18n.t("menuTopCity"),
+            headerLeft: () => (
+              <NavigationDrawerStructure navigationProps={navigation} />
+            ),
+          }}
+        />
+        <SearchNavigation.Screen
+          name='ViewSettingsScreen'
+          component={SettingsScreen}
+          options={{
+            headerTitle: i18n.t("menuTopSettings"),
+            headerLeft: () => (
+              <NavigationDrawerStructure navigationProps={navigation} />
+            ),
+          }}
+        />
+        <SearchNavigation.Screen
+          name='ViewFavScreen'
+          component={FavCitiesScreen}
+          options={{
+            headerTitle: i18n.t("menuTopFav"),
+            headerLeft: () => (
+              <NavigationDrawerStructure navigationProps={navigation} />
+            ),
+          }}
         />
       </SearchNavigation.Navigator>
     );
   }
 
-  function favStackScreens() {
+  function CustomDrawerContent(props) {
     return (
-      <FavNavigation.Navigator initialRouteName='ViewFav'>
-        <FavNavigation.Screen
-          name='ViewFav'
-          component={FavCities}
-          options={{ title: i18n.t("menuTopFav") }}
+      <DrawerContentScrollView
+        {...props}
+        contentContainerStyle={styles.container}
+      >
+        <SafeAreaView forceInset={{ top: "always", horizontal: "never" }}>
+          <DrawerItem
+            icon={() => getIcon("search")}
+            label={i18n.t("menuTopSearch")}
+            onPress={() => props.navigation.navigate("ViewSearchScreen")}
+          />
+          <DrawerItem
+            icon={() => getIcon("star")}
+            label={i18n.t("menuTopFav")}
+            onPress={() => props.navigation.navigate("ViewFavScreen")}
+          />
+        </SafeAreaView>
+        <DrawerItem
+          icon={() => getIcon("gear")}
+          label={i18n.t("menuTopSettings")}
+          onPress={() => props.navigation.navigate("ViewSettingsScreen")}
+          style={styles.bottomButton}
         />
-        <FavNavigation.Screen
-          name='ViewCity'
-          component={City}
-          options={{ title: i18n.t("menuTopCity") }}
-        />
-      </FavNavigation.Navigator>
+      </DrawerContentScrollView>
     );
   }
 
+  const getIcon = (icon_name) => {
+    return (
+      <FontAwesome.Button
+        name={icon_name}
+        backgroundColor={"white"}
+        color={"black"}
+        style={{ marginLeft: 8 }}
+      ></FontAwesome.Button>
+    );
+  };
+
   return (
-    <TabNavigation.Navigator
-      tabBarOptions={{
-        activeTintColor: Colors.mainGreen,
+    <DrawerNavigation.Navigator
+      drawerType={"slide"}
+      drawerContentOptions={{
+        activeTintColor: "#6441d8",
+        itemStyle: { marginVertical: 5 },
       }}
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
+      initialRouteName={i18n.t("menuBottomSearch")}
     >
-      <TabNavigation.Screen
+      <DrawerNavigation.Screen
         name={i18n.t("menuBottomSearch")}
+        options={{ drawerLabel: i18n.t("menuBottomSearch") }}
         component={searchStackScreens}
-        options={() => ({
-          tabBarIcon: ({ color }) => {
-            return (
-              <Image
-                source={Assets.icons.search}
-                style={{ tintColor: color }}
-              />
-            );
-          },
-        })}
       />
-      <TabNavigation.Screen
-        name={i18n.t("menuBottomFav")}
-        component={favStackScreens}
-        options={() => ({
-          tabBarIcon: ({ color }) => {
-            return (
-              <Image source={Assets.icons.fav} style={{ tintColor: color }} />
-            );
-          },
-        })}
-      />
-    </TabNavigation.Navigator>
+    </DrawerNavigation.Navigator>
   );
 };
 
@@ -119,9 +159,11 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps)(Navigation);
 
 const styles = StyleSheet.create({
-  buttonPlacement: {
+  container: {
     flex: 1,
-    paddingHorizontal: 12,
-    marginRight: 16,
+    justifyContent: "space-between",
+  },
+  bottomButton: {
+    bottom: 0,
   },
 });

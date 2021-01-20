@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Text, FlatList } from "react-native";
 import { connect } from "react-redux";
-import DisplayError from "./DisplayError";
+import DisplayError from "../components/DisplayError";
 
-const FavCities = ({ navigation, favCities }) => {
+const FavCitiesScreen = ({ navigation, favCities }) => {
   const [cities, setCities] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -37,13 +37,13 @@ const FavCities = ({ navigation, favCities }) => {
   };
 
   const navigateToCityDetails = (cityId) => {
-    navigation.navigate("ViewCity", { cityId });
+    navigation.navigate("ViewCityScreen", { cityId });
   };
 
   return (
     <View style={styles.container}>
       {isError ? (
-        <DisplayError message="Impossible de récupérer les villes" />
+        <DisplayError message='Impossible de récupérer les villes' />
       ) : (
         <FlatList
           data={cities}
@@ -67,10 +67,11 @@ const FavCities = ({ navigation, favCities }) => {
 const mapStateToProps = (state) => {
   return {
     favCities: state.favoriteCitiesIds,
+    language: state.userPreference.location,
   };
 };
 
-export default connect(mapStateToProps)(FavCities);
+export default connect(mapStateToProps)(FavCitiesScreen);
 
 const styles = StyleSheet.create({
   container: {

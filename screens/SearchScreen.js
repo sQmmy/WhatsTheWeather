@@ -10,15 +10,15 @@ import {
   ActivityIndicator,
 } from "react-native";
 import Colors from "../definitions/Colors";
-import DisplayError from "./DisplayError";
+import DisplayError from "../components/DisplayError";
 import CityListItem from "../components/CityListItem";
 import * as API from "../api/openweather";
 import { FontAwesome } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
 import { connect } from "react-redux";
 import i18n from "i18n-js";
+import { LinearGradient } from "expo-linear-gradient";
 
-const Search = ({ navigation, favCities }) => {
+const SearchScreen = ({ language, navigation, favCities }) => {
   const [cities, setCities] = useState([]);
 
   const [cityName, setCityName] = useState("");
@@ -38,6 +38,12 @@ const Search = ({ navigation, favCities }) => {
     })();
   }, [location]);
 
+  useEffect(() => {
+    if (cityName < 1) {
+      Keyboard.dismiss();
+    }
+  }, [cityName]);
+
   const isFavoriteCity = (cityId) => {
     if (favCities.findIndex((i) => i === cityId) !== -1) {
       return true;
@@ -45,8 +51,12 @@ const Search = ({ navigation, favCities }) => {
     return false;
   };
 
-  const navigateToCityDetails = (cityId) => {
-    navigation.navigate("ViewCity", { cityId });
+  const navigateToCityDetails = (cityId, lat, lon) => {
+    navigation.navigate("ViewCityScreen", {
+      cityId: cityId,
+      lat: lat,
+      lon: lon,
+    });
   };
 
   const locateMe = async () => {
@@ -74,7 +84,8 @@ const Search = ({ navigation, favCities }) => {
       const searchResult = await API.getForecastForCity(
         cityName,
         stateCode,
-        countryCode
+        countryCode,
+        language
       );
       setCities([]);
       if (searchResult.cod == 404) {
@@ -95,7 +106,8 @@ const Search = ({ navigation, favCities }) => {
     try {
       const searchResult = await API.getForecastForLatLon(
         location.coords.latitude,
-        location.coords.longitude
+        location.coords.longitude,
+        language
       );
       setCities([searchResult]);
     } catch (error) {
@@ -114,84 +126,93 @@ const Search = ({ navigation, favCities }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{i18n.t("location")}</Text>
-      <View style={styles.searchContainer}>
-        <View style={styles.topSearchInput}>
-          <View style={styles.elementInput}>
-            <TextInput
-              placeholder={i18n.t("cityNameInput")}
-              style={styles.input}
-              onChangeText={(text) => setCityName(text)}
-            />
+      <LinearGradient
+        colors={["#1a5193", "#4d8dd5", "#4d8dd5"]}
+        style={{ flex: 1 }}
+      >
+        <View style={styles.secondContainer}>
+          <Text style={styles.title}>{i18n.t("location")}</Text>
+          <View style={styles.topSearchInput}>
+            <View style={styles.elementInput}>
+              <TextInput
+                placeholder={i18n.t("cityNameInput")}
+                placeholderTextColor={"#9c9c9ccc"}
+                style={styles.input}
+                onChangeText={(text) => setCityName(text)}
+              />
+            </View>
+            <View style={styles.elementInput}>
+              <TextInput
+                placeholder={i18n.t("stateNameInput")}
+                placeholderTextColor={"#9c9c9ccc"}
+                style={styles.input}
+                onChangeText={(text) => setStateCode(text)}
+              />
+            </View>
           </View>
-          <View style={styles.elementInput}>
-            <TextInput
-              placeholder={i18n.t("stateNameInput")}
-              style={styles.input}
-              onChangeText={(text) => setStateCode(text)}
-            />
+
+          <View style={styles.bottomSearchInput}>
+            <View style={styles.elementInput}>
+              <TextInput
+                placeholder={i18n.t("countryCodeInput")}
+                placeholderTextColor={"#9c9c9ccc"}
+                style={styles.input}
+                onChangeText={(text) => setCountryCode(text)}
+              />
+            </View>
+          </View>
+          <View style={styles.buttonContainer}>
+            <View style={styles.buttonStyle}>
+              <FontAwesome.Button
+                name='search'
+                disabled={cityName.length < 1}
+                backgroundColor={Colors.mainBlue}
+                onPress={searchCities}
+                style={cityName.length < 1 ? styles.disabledButton : ""}
+              >
+                {i18n.t("searchButton")}
+              </FontAwesome.Button>
+            </View>
+            <View style={styles.buttonStyle}>
+              <FontAwesome.Button
+                name='map-marker'
+                backgroundColor={Colors.mainBlue}
+                onPress={locateMe}
+              >
+                {i18n.t("locateButton")}
+              </FontAwesome.Button>
+            </View>
           </View>
         </View>
 
-        <View style={styles.bottomSearchInput}>
-          <View style={styles.elementInput}>
-            <TextInput
-              placeholder={i18n.t("countryCodeInput")}
-              style={styles.input}
-              onChangeText={(text) => setCountryCode(text)}
-            />
-          </View>
-        </View>
-        <View style={styles.buttonContainer}>
-          <View style={styles.buttonStyle}>
-            <FontAwesome.Button
-              name='search'
-              disabled={cityName.length < 1}
-              backgroundColor={Colors.mainBlue}
-              onPress={searchCities}
-              style={cityName.length < 1 ? styles.disabledButton : ""}
-            >
-              {i18n.t("searchButton")}
-            </FontAwesome.Button>
-          </View>
-          <View style={styles.buttonStyle}>
-            <FontAwesome.Button
-              name='map-marker'
-              backgroundColor={Colors.mainBlue}
-              onPress={locateMe}
-            >
-              {i18n.t("locateButton")}
-            </FontAwesome.Button>
-          </View>
-        </View>
-      </View>
+        <View style={styles.secondContainer}>
+          <Text style={styles.title}>
+            {cities.length != 0 ? i18n.t("resultsHeader") : ""}
+          </Text>
 
-      <Text style={styles.title}>
-        {cities.length != 0 ? i18n.t("resultsHeader") : ""}
-      </Text>
-
-      {isError ? (
-        <DisplayError message={i18n.t(errorMsg)} />
-      ) : isLoading ? (
-        <View style={styles.loader}>
-          <BlurView intensity={250} style={StyleSheet.absoluteFill} />
-          <ActivityIndicator color={Colors.mainBlue} size='large' />
-        </View>
-      ) : (
-        <FlatList
-          data={cities}
-          keyExtractor={(item) => item.city.id.toString()}
-          renderItem={({ item }) => (
-            <CityListItem
-              city={item}
-              onClick={navigateToCityDetails}
-              isFav={isFavoriteCity(item.city.id)}
+          {isError ? (
+            <DisplayError message={i18n.t(errorMsg)} />
+          ) : isLoading ? (
+            <View style={styles.loader}>
+              <ActivityIndicator color={"white"} size='large' />
+            </View>
+          ) : (
+            <FlatList
+              data={cities}
+              keyExtractor={(item) => item.city.id.toString()}
+              renderItem={({ item }) => (
+                <CityListItem
+                  city={item}
+                  onClick={navigateToCityDetails}
+                  isFav={isFavoriteCity(item.city.id)}
+                />
+              )}
+              refreshing={isLoading}
+              onRefresh={searchCities}
             />
           )}
-          refreshing={isLoading}
-          onRefresh={searchCities}
-        />
-      )}
+        </View>
+      </LinearGradient>
     </View>
   );
 };
@@ -199,20 +220,21 @@ const Search = ({ navigation, favCities }) => {
 const mapStateToProps = (state) => {
   return {
     favCities: state.favCitiesReducer.favoriteCitiesIds,
+    language: state.userPreference.location,
   };
 };
 
-export default connect(mapStateToProps)(Search);
+export default connect(mapStateToProps)(SearchScreen);
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 12,
-    marginTop: 16,
   },
-  searchContainer: {
+  secondContainer: {
     flex: 1,
     marginBottom: 16,
+    paddingHorizontal: 12,
+    marginTop: 16,
   },
   buttonContainer: {
     flex: 1,
@@ -235,10 +257,12 @@ const styles = StyleSheet.create({
     bottom: 0,
     alignItems: "center",
     justifyContent: "center",
+    marginBottom: 50,
   },
   title: {
     fontSize: 28,
     fontWeight: "bold",
+    color: "#ffffffbd",
   },
   topSearchInput: {
     flex: 1,
@@ -246,6 +270,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginHorizontal: 20,
+  },
+  input: {
+    color: "#ffffffbd",
   },
   bottomSearchInput: {
     alignItems: "center",
