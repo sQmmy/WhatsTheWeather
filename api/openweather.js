@@ -10,26 +10,13 @@ const createParams = (city, state_code, country_code) => {
   return params;
 };
 
-export async function getWeatherByCity(city, state_code, country_code) {
-  let params = createParams(city, state_code, country_code);
-
-  try {
-    const url = apiUrl + `/weather?appid=${API_KEY}&q=${params}&units=metric`;
-    const response = await fetch(url);
-    const json = await response.json();
-    return json;
-  } catch (error) {
-    console.log(`Error with function getWeatherByCity ${error.message}`);
-    throw error;
-  }
-}
-
-export async function getForecastForCity(city, state_code, country_code) {
+export async function getForecastForCity(city, state_code, country_code, lng) {
   let params = createParams(city, state_code, country_code);
 
   try {
     const url =
-      apiUrl + `/forecast?appid=${API_KEY}&q=${params}&units=metric&cnt=4`;
+      apiUrl +
+      `/forecast?appid=${API_KEY}&q=${params}&units=metric&cnt=4&lang=${lng}`;
     const response = await fetch(url);
     const json = await response.json();
     return json;
@@ -39,35 +26,25 @@ export async function getForecastForCity(city, state_code, country_code) {
   }
 }
 
-export async function getWeatherByCityId(id) {
+export async function getCompleteDataForLatLon(lat, lon, lng) {
   try {
-    const url = apiUrl + `/weather?id=${id}&appid=${API_KEY}&units=metric`;
+    const url =
+      apiUrl +
+      `/onecall?appid=${API_KEY}&lat=${lat}&lon=${lon}&units=metric&lang=${lng}`;
     const response = await fetch(url);
     const json = await response.json();
     return json;
   } catch (error) {
-    console.log(`Error with function getWeatherByCityId ${error.message}`);
+    console.log(`Error with function getForecastForCity ${error.message}`);
     throw error;
   }
 }
 
-export async function getWeatherByLatLon(lat, lon) {
+export async function getForecastForLatLon(lat, lon, lng) {
   try {
     const url =
-      apiUrl + `/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
-    const response = await fetch(url);
-    const json = await response.json();
-    return json;
-  } catch (error) {
-    console.log(`Error with function getWeatherByCityId ${error.message}`);
-    throw error;
-  }
-}
-
-export async function getForecastForLatLon(lat, lon) {
-  try {
-    const url =
-      apiUrl + `/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
+      apiUrl +
+      `/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&cnt=4&lang=${lng}`;
     const response = await fetch(url);
     const json = await response.json();
     return json;
@@ -76,6 +53,35 @@ export async function getForecastForLatLon(lat, lon) {
     throw error;
   }
 }
+
+/**
+ * Requêtes appelées au début du développement, puis abandon de l'utilisation -> pas assez détaillées, pas de forecast, que current
+ */
+
+// export async function getWeatherByCityId(id) {
+//   try {
+//     const url = apiUrl + `/weather?id=${id}&appid=${API_KEY}&units=metric`;
+//     const response = await fetch(url);
+//     const json = await response.json();
+//     return json;
+//   } catch (error) {
+//     console.log(`Error with function getWeatherByCityId ${error.message}`);
+//     throw error;
+//   }
+// }
+
+// export async function getWeatherByLatLon(lat, lon) {
+//   try {
+//     const url =
+//       apiUrl + `/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
+//     const response = await fetch(url);
+//     const json = await response.json();
+//     return json;
+//   } catch (error) {
+//     console.log(`Error with function getWeatherByCityId ${error.message}`);
+//     throw error;
+//   }
+// }
 
 // export async function getCoordinates(city, state_code, country_code) {
 //   let params = createParams(city, state_code, country_code);
@@ -87,6 +93,20 @@ export async function getForecastForLatLon(lat, lon) {
 //     return json;
 //   } catch (error) {
 //     console.log(`Error with function getCoordinates ${error.message}`);
+//     throw error;
+//   }
+// }
+
+// export async function getWeatherByCity(city, state_code, country_code) {
+//   let params = createParams(city, state_code, country_code);
+
+//   try {
+//     const url = apiUrl + `/weather?appid=${API_KEY}&q=${params}&units=metric`;
+//     const response = await fetch(url);
+//     const json = await response.json();
+//     return json;
+//   } catch (error) {
+//     console.log(`Error with function getWeatherByCity ${error.message}`);
 //     throw error;
 //   }
 // }
