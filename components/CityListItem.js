@@ -1,16 +1,16 @@
-import React from "react";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useEffect } from "react";
 import {
   View,
   StyleSheet,
   Text,
   TouchableOpacity,
-  ImageBackground,
   FlatList,
   Image,
 } from "react-native";
 import Flag from "react-native-flags";
 
-const CityListItem = ({ onClick, isFav = false, city }) => {
+const CityListItem = ({ onClick, favCities, isFav = false, city }) => {
   const returnDate = (timestamp) => {
     let tab = timestamp.split(" ")[1].split(":");
     return tab[0] + ":" + tab[1];
@@ -21,15 +21,14 @@ const CityListItem = ({ onClick, isFav = false, city }) => {
   };
 
   return (
-    <ImageBackground
-      source={require("../assets/cloudy.png")}
-      style={styles.image}
-      blurRadius={0.5}
+    <LinearGradient
+      colors={["#6ba2e1", "#6ba2e1", "#6ba2e1"]}
+      style={styles.container}
     >
       <TouchableOpacity
         style={styles.container}
         onPress={() => {
-          onClick(city.id);
+          onClick(city.city.id, city.city.coord.lat, city.city.coord.lon);
         }}
       >
         <View style={styles.informationContainer}>
@@ -43,11 +42,13 @@ const CityListItem = ({ onClick, isFav = false, city }) => {
             <FlatList
               horizontal={true}
               data={city.list}
+              extraData={favCities}
               keyExtractor={(item) => item.dt.toString()}
               renderItem={({ item }) => (
                 <View style={styles.forecastElement}>
                   <Text style={styles.elementText}>
-                    {Math.round(item.main.temp)}°C
+                    {Math.round(item.main.temp_min)}/
+                    {Math.round(item.main.temp_max)}°C
                   </Text>
                   <Image
                     source={{
@@ -64,7 +65,7 @@ const CityListItem = ({ onClick, isFav = false, city }) => {
           </View>
         </View>
       </TouchableOpacity>
-    </ImageBackground>
+    </LinearGradient>
   );
 };
 
@@ -72,24 +73,19 @@ export default CityListItem;
 
 const styles = StyleSheet.create({
   container: {
-    borderBottomWidth: 1,
-    borderTopWidth: 1,
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderRadius: 20,
-    borderColor: "black",
+    borderRadius: 16,
     paddingVertical: 8,
     height: 150,
   },
   image: {
-    borderRadius: 20,
+    borderRadius: 10,
     flex: 1,
     resizeMode: "center",
     justifyContent: "center",
     overflow: "hidden",
   },
   flagStyle: {
-    marginLeft: 10,
+    marginLeft: 16,
   },
   cityHeader: {
     flex: 1,
@@ -104,24 +100,14 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     justifyContent: "center",
   },
-  statsContainer: {
-    flexDirection: "row",
-    marginTop: 12,
-  },
-  statContainer: {
-    flexDirection: "row",
-    marginRight: 8,
-  },
   title: {
     fontSize: 20,
     fontWeight: "bold",
   },
-  data: {
-    fontSize: 16,
-  },
   forecastElement: {
     flex: 1,
-    marginHorizontal: 24,
+    marginHorizontal: 26,
+    marginBottom: 10,
   },
   elementIcon: {
     width: 36,
