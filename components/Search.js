@@ -71,7 +71,7 @@ const Search = ({ navigation, favCities }) => {
     setIsLoading(true);
     setIsError(false);
     try {
-      const searchResult = await API.getWeatherByCity(
+      const searchResult = await API.getForecastForCity(
         cityName,
         stateCode,
         countryCode
@@ -181,12 +181,12 @@ const Search = ({ navigation, favCities }) => {
       ) : (
         <FlatList
           data={cities}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item.city.id.toString()}
           renderItem={({ item }) => (
             <CityListItem
               city={item}
               onClick={navigateToCityDetails}
-              isFav={isFavoriteCity(item.id)}
+              isFav={isFavoriteCity(item.city.id)}
             />
           )}
           refreshing={isLoading}

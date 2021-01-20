@@ -1,28 +1,62 @@
 import React from "react";
-import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
-import Colors from "../definitions/Colors";
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  ImageBackground,
+  FlatList,
+  Image,
+} from "react-native";
 import Flag from "react-native-flags";
 
 const CityListItem = ({ onClick, isFav = false, city }) => {
+  const returnDate = (timestamp) => {
+    let tab = timestamp.split(" ")[1].split(":");
+    return tab[0] + ":" + tab[1];
+  };
+
   return (
-    <TouchableOpacity
-      style={styles.container}
-      onPress={() => {
-        onClick(city.id);
-      }}
+    <ImageBackground
+      source={require("../assets/cloudy.png")}
+      style={styles.image}
+      blurRadius={0.5}
     >
-      <View style={styles.informationContainer}>
-        <View style={styles.cityHeader}>
-          <Text style={styles.title}>
-            {city.name}, {city.sys.country}
-          </Text>
-          <Flag style={styles.flagStyle} code={city.sys.country} size={32} />
+      <TouchableOpacity
+        style={styles.container}
+        onPress={() => {
+          onClick(city.id);
+        }}
+      >
+        <View style={styles.informationContainer}>
+          <View style={styles.cityHeader}>
+            <Text style={styles.title}>
+              {city.city.name}, {city.city.country}
+            </Text>
+            <Flag style={styles.flagStyle} code={city.city.country} size={32} />
+          </View>
+          <View style={styles.cityFooter}>
+            <FlatList
+              horizontal={true}
+              data={city.list}
+              keyExtractor={(item) => item.dt.toString()}
+              renderItem={({ item }) => (
+                <View style={styles.forecastElement}>
+                  <Text>{Math.round(item.main.temp)}°C</Text>
+                  <Image
+                    source={{
+                      uri: `http://openweathermap.org/img/wn/${item.weather.icon}@2x.png`,
+                    }}
+                    style={styles.elementIcon}
+                  />
+                  <Text>{returnDate(item.dt_txt)}</Text>
+                </View>
+              )}
+            />
+          </View>
         </View>
-        <Text style={styles.data}>Humidité : {city.main.humidity}</Text>
-        <Text style={styles.data}>Pression : {city.main.pressure}</Text>
-        <Text style={styles.data}>Température : {city.main.temp}</Text>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </ImageBackground>
   );
 };
 
@@ -30,8 +64,21 @@ export default CityListItem;
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderTopWidth: 1,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderRadius: 20,
+    borderColor: "black",
     paddingVertical: 8,
+    height: 150,
+  },
+  image: {
+    borderRadius: 20,
+    flex: 1,
+    resizeMode: "center",
+    justifyContent: "center",
+    overflow: "hidden",
   },
   flagStyle: {
     marginLeft: 10,
@@ -39,6 +86,10 @@ const styles = StyleSheet.create({
   cityHeader: {
     flex: 1,
     flexDirection: "row",
+  },
+  cityFooter: {
+    bottom: 0,
+    alignItems: "center",
   },
   informationContainer: {
     flex: 1,
@@ -53,18 +104,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginRight: 8,
   },
-  thumbnail: {
-    width: 128,
-    height: 128,
-    borderRadius: 12,
-    backgroundColor: Colors.mainGreen,
-  },
-  errorImg: {
-    width: 128,
-    height: 128,
-    borderRadius: 12,
-    backgroundColor: "white",
-  },
   title: {
     fontSize: 20,
     fontWeight: "bold",
@@ -72,10 +111,13 @@ const styles = StyleSheet.create({
   data: {
     fontSize: 16,
   },
-  icon: {
-    tintColor: Colors.mainGreen,
+  forecastElement: {
+    flex: 1,
+    marginHorizontal: 24,
   },
-  stat: {
-    marginLeft: 4,
+  elementIcon: {
+    width: 10,
+    height: 10,
+    position: "absolute",
   },
 });
