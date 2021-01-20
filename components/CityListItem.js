@@ -16,6 +16,10 @@ const CityListItem = ({ onClick, isFav = false, city }) => {
     return tab[0] + ":" + tab[1];
   };
 
+  const getUri = (list) => {
+    return "http://openweathermap.org/img/wn/" + list[0].icon + "@2x.png";
+  };
+
   return (
     <ImageBackground
       source={require("../assets/cloudy.png")}
@@ -42,14 +46,18 @@ const CityListItem = ({ onClick, isFav = false, city }) => {
               keyExtractor={(item) => item.dt.toString()}
               renderItem={({ item }) => (
                 <View style={styles.forecastElement}>
-                  <Text>{Math.round(item.main.temp)}°C</Text>
+                  <Text style={styles.elementText}>
+                    {Math.round(item.main.temp)}°C
+                  </Text>
                   <Image
                     source={{
-                      uri: `http://openweathermap.org/img/wn/${item.weather.icon}@2x.png`,
+                      uri: getUri(item.weather),
                     }}
                     style={styles.elementIcon}
                   />
-                  <Text>{returnDate(item.dt_txt)}</Text>
+                  <Text style={styles.elementText}>
+                    {returnDate(item.dt_txt)}
+                  </Text>
                 </View>
               )}
             />
@@ -116,8 +124,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
   },
   elementIcon: {
-    width: 10,
-    height: 10,
-    position: "absolute",
+    width: 36,
+    height: 36,
+  },
+  elementText: {
+    textAlign: "center",
   },
 });

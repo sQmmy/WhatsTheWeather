@@ -64,19 +64,18 @@ export async function getWeatherByLatLon(lat, lon) {
   }
 }
 
-// export async function getCompleteData(lat, lon) {
-//   try {
-//     const url =
-//       apiUrl +
-//       `/onecall?lat=${lat}&lon=${lon}&exclude=alerts,minutely,daily&appid=${API_KEY}`;
-//     const response = await fetch(url);
-//     const json = await response.json();
-//     return json;
-//   } catch (error) {
-//     console.log(`Error with function getCompleteData ${error.message}`);
-//     throw error;
-//   }
-// }
+export async function getForecastForLatLon(lat, lon) {
+  try {
+    const url =
+      apiUrl + `/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
+    const response = await fetch(url);
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.log(`Error with function getForecastForLatLon ${error.message}`);
+    throw error;
+  }
+}
 
 // export async function getCoordinates(city, state_code, country_code) {
 //   let params = createParams(city, state_code, country_code);

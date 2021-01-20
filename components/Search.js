@@ -33,7 +33,7 @@ const Search = ({ navigation, favCities }) => {
   useEffect(() => {
     (async () => {
       if (location !== null) {
-        await requestCitiesByLatLon();
+        await requestCityForecastByLatLon();
       }
     })();
   }, [location]);
@@ -90,14 +90,13 @@ const Search = ({ navigation, favCities }) => {
     setIsLoading(false);
   };
 
-  const requestCitiesByLatLon = async () => {
+  const requestCityForecastByLatLon = async () => {
     setIsError(false);
     try {
-      const searchResult = await API.getWeatherByLatLon(
+      const searchResult = await API.getForecastForLatLon(
         location.coords.latitude,
         location.coords.longitude
       );
-
       setCities([searchResult]);
     } catch (error) {
       setErrorMsg("apiError");
