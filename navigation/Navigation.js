@@ -63,9 +63,6 @@ const Navigation = ({ language }) => {
           component={CityScreen}
           options={{
             headerTitle: i18n.t("menuTopCity"),
-            headerLeft: () => (
-              <NavigationDrawerStructure navigationProps={navigation} />
-            ),
           }}
         />
         <SearchNavigation.Screen
@@ -73,9 +70,6 @@ const Navigation = ({ language }) => {
           component={SettingsScreen}
           options={{
             headerTitle: i18n.t("menuTopSettings"),
-            headerLeft: () => (
-              <NavigationDrawerStructure navigationProps={navigation} />
-            ),
           }}
         />
         <SearchNavigation.Screen

@@ -38,12 +38,6 @@ const SearchScreen = ({ language, unit, navigation, favCities }) => {
     })();
   }, [location]);
 
-  useEffect(() => {
-    if (cityName < 1) {
-      Keyboard.dismiss();
-    }
-  }, [cityName]);
-
   const isFavoriteCity = (cityId) => {
     if (favCities.findIndex((i) => i === cityId) !== -1) {
       return true;
@@ -204,7 +198,8 @@ const SearchScreen = ({ language, unit, navigation, favCities }) => {
               keyExtractor={(item) => item.city.id.toString()}
               renderItem={({ item }) => (
                 <CityListItem
-                  city={item}
+                  city={item.city}
+                  weatherList={item.list}
                   onClick={navigateToCityDetails}
                   isFav={isFavoriteCity(item.city.id)}
                 />
