@@ -6,10 +6,8 @@ import { Persistor, Store } from "./store/config";
 import { NavigationContainer } from "@react-navigation/native";
 import Navigation from "./navigation/Navigation";
 import * as SplashScreen from "expo-splash-screen";
-import { Animated, Easing, Image, StyleSheet, Text, View } from "react-native";
+import { Animated, Easing, StyleSheet, Text, View } from "react-native";
 import i18n from "i18n-js";
-
-const AnimatedImage = Animated.createAnimatedComponent(Image);
 
 export default class App extends React.Component {
   state = {
@@ -76,7 +74,6 @@ export default class App extends React.Component {
   };
 
   async componentDidMount() {
-    // Prevent native splash screen from autohiding
     try {
       await SplashScreen.preventAutoHideAsync();
       this.fadeIn();
@@ -90,7 +87,7 @@ export default class App extends React.Component {
       return (
         <View style={styles.splashTopContainer}>
           <View style={styles.splashContainer}>
-            <AnimatedImage
+            <Animated.Image
               style={[
                 styles.splashScreen,
                 {
@@ -141,18 +138,18 @@ export default class App extends React.Component {
           </View>
         </View>
       );
+    } else {
+      return (
+        <Provider store={Store}>
+          <PersistGate loading={null} persistor={Persistor}>
+            <NavigationContainer>
+              <Navigation />
+              <StatusBar style='auto' />
+            </NavigationContainer>
+          </PersistGate>
+        </Provider>
+      );
     }
-
-    return (
-      <Provider store={Store}>
-        <PersistGate loading={null} persistor={Persistor}>
-          <NavigationContainer>
-            <Navigation />
-            <StatusBar style='auto' />
-          </NavigationContainer>
-        </PersistGate>
-      </Provider>
-    );
   }
 }
 
