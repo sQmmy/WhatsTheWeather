@@ -1,6 +1,6 @@
 import { locale } from "expo-localization";
 
-const initialState = { locale };
+const initialState = { location: locale, unit: "metric" };
 
 function userPreference(state = initialState, action) {
   let nextState;
@@ -9,6 +9,12 @@ function userPreference(state = initialState, action) {
       nextState = {
         ...state,
         location: action.value,
+      };
+      return nextState || state;
+    case "CHANGE_UNITS":
+      nextState = {
+        ...state,
+        unit: action.value,
       };
       return nextState || state;
     default:

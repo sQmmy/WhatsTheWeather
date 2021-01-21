@@ -18,7 +18,7 @@ import { connect } from "react-redux";
 import i18n from "i18n-js";
 import { LinearGradient } from "expo-linear-gradient";
 
-const SearchScreen = ({ language, navigation, favCities }) => {
+const SearchScreen = ({ language, unit, navigation, favCities }) => {
   const [cities, setCities] = useState([]);
 
   const [cityName, setCityName] = useState("");
@@ -85,7 +85,8 @@ const SearchScreen = ({ language, navigation, favCities }) => {
         cityName,
         stateCode,
         countryCode,
-        language
+        language,
+        unit
       );
       setCities([]);
       if (searchResult.cod == 404) {
@@ -107,7 +108,8 @@ const SearchScreen = ({ language, navigation, favCities }) => {
       const searchResult = await API.getForecastForLatLon(
         location.coords.latitude,
         location.coords.longitude,
-        language
+        language,
+        unit
       );
       setCities([searchResult]);
     } catch (error) {
@@ -221,6 +223,7 @@ const mapStateToProps = (state) => {
   return {
     favCities: state.favCitiesReducer.favoriteCitiesIds,
     language: state.userPreference.location,
+    unit: state.userPreference.unit,
   };
 };
 

@@ -10,13 +10,18 @@ const createParams = (city, state_code, country_code) => {
   return params;
 };
 
-export async function getForecastForCity(city, state_code, country_code, lng) {
+export async function getForecastForCity(
+  city,
+  state_code,
+  country_code,
+  lng,
+  unit
+) {
   let params = createParams(city, state_code, country_code);
-
   try {
     const url =
       apiUrl +
-      `/forecast?appid=${API_KEY}&q=${params}&units=metric&cnt=4&lang=${lng}`;
+      `/forecast?appid=${API_KEY}&q=${params}&units=${unit}&cnt=4&lang=${lng}`;
     const response = await fetch(url);
     const json = await response.json();
     return json;
@@ -26,11 +31,11 @@ export async function getForecastForCity(city, state_code, country_code, lng) {
   }
 }
 
-export async function getCompleteDataForLatLon(lat, lon, lng) {
+export async function getCompleteDataForLatLon(lat, lon, lng, unit) {
   try {
     const url =
       apiUrl +
-      `/onecall?appid=${API_KEY}&lat=${lat}&lon=${lon}&units=metric&lang=${lng}`;
+      `/onecall?appid=${API_KEY}&lat=${lat}&lon=${lon}&units=${unit}&lang=${lng}`;
     const response = await fetch(url);
     const json = await response.json();
     return json;
@@ -40,11 +45,11 @@ export async function getCompleteDataForLatLon(lat, lon, lng) {
   }
 }
 
-export async function getForecastForLatLon(lat, lon, lng) {
+export async function getForecastForLatLon(lat, lon, lng, unit) {
   try {
     const url =
       apiUrl +
-      `/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&cnt=4&lang=${lng}`;
+      `/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=${unit}&cnt=4&lang=${lng}`;
     const response = await fetch(url);
     const json = await response.json();
     return json;
