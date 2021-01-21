@@ -32,30 +32,18 @@ export async function getForecastForCity(
   }
 }
 
-export async function getGeocodeForCity(city, state_code, country_code) {
-  let params = createParams(city, state_code, country_code);
-
-  try {
-    const url = geocodeUrl + `/direct?appid=${API_KEY}&q=${params}&limit=1`;
-    const response = await fetch(url);
-    const json = await response.json();
-    return json;
-  } catch (error) {
-    console.log(`Error with function getGeocodeForCity ${error.message}`);
-    throw error;
-  }
-}
-
 export async function getCompleteDataForLatLon(lat, lon, lng, unit) {
   try {
     const url =
       apiUrl +
-      `/onecall?appid=${API_KEY}&lat=${lat}&lon=${lon}&units=${unit}&lang=${lng}`;
+      `/onecall?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=${unit}&lang=${lng}`;
     const response = await fetch(url);
     const json = await response.json();
     return json;
   } catch (error) {
-    console.log(`Error with function getForecastForCity ${error.message}`);
+    console.log(
+      `Error with function getCompleteDataForLatLon ${error.message}`
+    );
     throw error;
   }
 }
@@ -85,6 +73,10 @@ export async function getWeatherByCityId(id) {
     throw error;
   }
 }
+
+export const getIconUri = (list) => {
+  return "http://openweathermap.org/img/wn/" + list[0].icon + "@2x.png";
+};
 
 /**
  * Requêtes appelées au début du développement, puis abandon de l'utilisation -> pas assez détaillées, pas de forecast, que current
@@ -127,6 +119,20 @@ export async function getWeatherByCityId(id) {
 //     return json;
 //   } catch (error) {
 //     console.log(`Error with function getWeatherByCity ${error.message}`);
+//     throw error;
+//   }
+// }
+
+// export async function getGeocodeForCity(city, state_code, country_code) {
+//   let params = createParams(city, state_code, country_code);
+
+//   try {
+//     const url = geocodeUrl + `/direct?appid=${API_KEY}&q=${params}&limit=1`;
+//     const response = await fetch(url);
+//     const json = await response.json();
+//     return json;
+//   } catch (error) {
+//     console.log(`Error with function getGeocodeForCity ${error.message}`);
 //     throw error;
 //   }
 // }

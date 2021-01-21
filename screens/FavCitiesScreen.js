@@ -45,16 +45,21 @@ const FavCitiesScreen = ({ navigation, language, unit, favCities }) => {
     return false;
   };
 
-  const navigateToCityDetails = (cityId) => {
-    navigation.navigate("ViewCityScreen", { cityId });
+  const navigateToCityDetails = (cityId, lat, lon, cityName) => {
+    navigation.navigate("ViewCityScreen", {
+      cityId: cityId,
+      lat: lat,
+      lon: lon,
+      cityName: cityName,
+    });
   };
 
   return (
-    <View style={styles.container}>
-      <LinearGradient
-        colors={["#1a5193", "#4d8dd5", "#4d8dd5"]}
-        style={{ flex: 1 }}
-      >
+    <LinearGradient
+      colors={["#1a5193", "#4d8dd5", "#4d8dd5"]}
+      style={{ flex: 1 }}
+    >
+      <View style={styles.container}>
         <View style={styles.secondContainer}>
           {isError ? (
             <DisplayError message='Impossible de récupérer les villes' />
@@ -79,8 +84,8 @@ const FavCitiesScreen = ({ navigation, language, unit, favCities }) => {
             />
           )}
         </View>
-      </LinearGradient>
-    </View>
+      </View>
+    </LinearGradient>
   );
 };
 
@@ -97,6 +102,7 @@ export default connect(mapStateToProps)(FavCitiesScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: 80,
   },
   secondContainer: {
     flex: 1,

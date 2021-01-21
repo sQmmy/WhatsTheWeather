@@ -14,6 +14,7 @@ import CityScreen from "../screens/CityScreen";
 import FavCitiesScreen from "../screens/FavCitiesScreen";
 import SearchScreen from "../screens/SearchScreen";
 import SettingsScreen from "../screens/SettingsScreen";
+import Colors from "../definitions/Colors";
 
 const SearchNavigation = createStackNavigator();
 const DrawerNavigation = createDrawerNavigator();
@@ -37,8 +38,8 @@ const Navigation = ({ language }) => {
         <FontAwesome.Button
           onPress={() => toggleDrawer()}
           name='bars'
-          backgroundColor={"white"}
-          color={"black"}
+          backgroundColor={"transparent"}
+          color={"white"}
           style={{ marginLeft: 8 }}
         ></FontAwesome.Button>
       </View>
@@ -52,17 +53,33 @@ const Navigation = ({ language }) => {
           name='ViewSearchScreen'
           component={SearchScreen}
           options={{
-            headerTitle: i18n.t("menuTopSearch"),
             headerLeft: () => (
               <NavigationDrawerStructure navigationProps={navigation} />
             ),
+            headerTitle: i18n.t("menuTopSearch"),
+            headerShown: true,
+            headerTransparent: true,
+            headerTitleStyle: Colors.white,
+            headerTintColor: Colors.white,
+            headerTitleAlign: "center",
+          }}
+          header={{
+            style: styles.transparentHeader,
           }}
         />
         <SearchNavigation.Screen
           name='ViewCityScreen'
           component={CityScreen}
           options={{
-            headerTitle: i18n.t("menuTopCity"),
+            headerTitle: "",
+            headerShown: true,
+            headerTransparent: true,
+            headerTitleStyle: Colors.white,
+            headerTintColor: Colors.white,
+            headerTitleAlign: "center",
+          }}
+          header={{
+            style: styles.transparentHeader,
           }}
         />
         <SearchNavigation.Screen
@@ -80,6 +97,14 @@ const Navigation = ({ language }) => {
             headerLeft: () => (
               <NavigationDrawerStructure navigationProps={navigation} />
             ),
+            headerShown: true,
+            headerTransparent: true,
+            headerTitleStyle: Colors.white,
+            headerTintColor: Colors.white,
+            headerTitleAlign: "center",
+          }}
+          header={{
+            style: styles.transparentHeader,
           }}
         />
       </SearchNavigation.Navigator>
@@ -159,5 +184,13 @@ const styles = StyleSheet.create({
   },
   bottomButton: {
     bottom: 0,
+  },
+  transparentHeader: {
+    position: "absolute",
+    backgroundColor: "transparent",
+    zIndex: 100,
+    top: 0,
+    left: 0,
+    right: 0,
   },
 });

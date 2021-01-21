@@ -30,5 +30,15 @@
   "alertLngMessage": "This change will make you navigate through the search main screen",
   "alertResetMessage": "This will cause all your preferences to be re-initialized",
   "yes": "Yes",
-  "no": "No"
+  "no": "No",
+  "lastUpdate": "Last update : ",
+  "today": "Today",
+  "tomorrow": "Tomorrow",
+  "monday": "Monday",
+  "tuesday": "Tuesday",
+  "wednesday": "Wednesday",
+  "thursday": "Thursday",
+  "friday": "Friday",
+  "saturday": "Saturday",
+  "sunday": "Sunday"
 }

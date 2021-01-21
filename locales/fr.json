@@ -30,5 +30,15 @@
   "alertLngMessage": "Le changement de langue vous fera revenir au menu principal",
   "alertResetMessage": "Vos données sauvegardées seront perdues",
   "yes": "Oui",
-  "no": "Non"
+  "no": "Non",
+  "lastUpdate": "Dernière mise à jour : ",
+  "today": "Aujourd'hui",
+  "tomorrow": "Demain",
+  "monday": "Lundi",
+  "tuesday": "Mardi",
+  "wednesday": "Mercredi",
+  "thursday": "Jeudi",
+  "friday": "Vendredi",
+  "saturday": "Samedi",
+  "sunday": "Dimanche"
 }

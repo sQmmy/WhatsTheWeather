@@ -45,15 +45,17 @@ const SearchScreen = ({ language, unit, navigation, favCities }) => {
     return false;
   };
 
-  const navigateToCityDetails = (cityId, lat, lon) => {
+  const navigateToCityDetails = () => {
     navigation.navigate("ViewCityScreen", {
-      cityId: cityId,
-      lat: lat,
-      lon: lon,
+      cityId: cities[0].city.id,
+      lat: cities[0].city.coord.lat,
+      lon: cities[0].city.coord.lon,
+      cityName: cities[0].city.name,
     });
   };
 
   const locateMe = async () => {
+    Keyboard.dismiss();
     setIsLoading(true);
     let loc = await requestLocationToDevice();
     if (loc != null) {
@@ -121,13 +123,13 @@ const SearchScreen = ({ language, unit, navigation, favCities }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <LinearGradient
-        colors={["#1a5193", "#4d8dd5", "#4d8dd5"]}
-        style={{ flex: 1 }}
-      >
+    <LinearGradient
+      colors={["#1a5193", "#4d8dd5", "#4d8dd5"]}
+      style={{ flex: 1 }}
+    >
+      <View style={styles.container}>
         <View style={styles.secondContainer}>
-          <Text style={styles.title}>{i18n.t("location")}</Text>
+          {/* <Text style={styles.title}>{i18n.t("location")}</Text> */}
           <View style={styles.topSearchInput}>
             <View style={styles.elementInput}>
               <TextInput
@@ -209,8 +211,8 @@ const SearchScreen = ({ language, unit, navigation, favCities }) => {
             />
           )}
         </View>
-      </LinearGradient>
-    </View>
+      </View>
+    </LinearGradient>
   );
 };
 
@@ -227,6 +229,7 @@ export default connect(mapStateToProps)(SearchScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: 50,
   },
   secondContainer: {
     flex: 1,

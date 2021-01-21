@@ -1,6 +1,6 @@
 import { FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useEffect } from "react";
+import React from "react";
 import {
   View,
   StyleSheet,
@@ -10,6 +10,7 @@ import {
   Image,
 } from "react-native";
 import Flag from "react-native-flags";
+import { getIconUri } from "../api/openweather";
 
 const CityListItem = ({
   onClick,
@@ -23,16 +24,12 @@ const CityListItem = ({
     return tab[0] + ":" + tab[1];
   };
 
-  const getUri = (list) => {
-    return "http://openweathermap.org/img/wn/" + list[0].icon + "@2x.png";
-  };
-
   const getStarIcon = () => {
     if (isFav) {
       return (
         <FontAwesome
           name='bookmark'
-          color={"black"}
+          color={"white"}
           style={styles.iconInput}
           size={36}
         />
@@ -51,13 +48,13 @@ const CityListItem = ({
 
   return (
     <LinearGradient
-      colors={["#6ba2e1", "#6ba2e1", "#6ba2e1"]}
+      colors={["#65a1e79c", "#65a1e79c", "#65a1e7de"]}
       style={styles.container}
     >
       <TouchableOpacity
         style={styles.container}
         onPress={() => {
-          onClick(city.id, city.coord.lat, city.coord.lon);
+          onClick(city.id, city.coord.lat, city.coord.lon, city.name);
         }}
       >
         <View style={styles.informationContainer}>
@@ -84,7 +81,7 @@ const CityListItem = ({
                   </Text>
                   <Image
                     source={{
-                      uri: getUri(item.weather),
+                      uri: getIconUri(item.weather),
                     }}
                     style={styles.elementIcon}
                   />
@@ -108,13 +105,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     paddingVertical: 8,
     height: 150,
-  },
-  image: {
-    borderRadius: 10,
-    flex: 1,
-    resizeMode: "center",
-    justifyContent: "center",
-    overflow: "hidden",
   },
   flagStyle: {
     marginLeft: 16,
@@ -165,5 +155,9 @@ const styles = StyleSheet.create({
   },
   iconInput: {
     marginHorizontal: 16,
+    fontWeight: "bold",
+    textShadowColor: "#000000",
+    textShadowRadius: 6,
+    textShadowOffset: { width: 0, height: 1 },
   },
 });
