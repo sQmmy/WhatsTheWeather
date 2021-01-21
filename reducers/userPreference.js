@@ -17,6 +17,8 @@ function userPreference(state = initialState, action) {
         unit: action.value,
       };
       return nextState || state;
+    case "RESTORE_APP":
+      return initialState;
     default:
       return state;
   }

@@ -17,6 +17,8 @@ function favCities(state = initialState, action) {
         ),
       };
       return nextState || state;
+    case "RESTORE_APP":
+      return initialState;
     default:
       return state;
   }

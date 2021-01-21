@@ -16,13 +16,5 @@ const appReducer = combineReducers({
 
 const reducerPersist = persistReducer(configPersist, appReducer);
 
-const rootReducer = (state, action) => {
-  if (action.type === "RESTORE_APP") {
-    state = undefined;
-  }
-  return appReducer(state, action);
-};
-
 export const Store = createStore(reducerPersist);
 export const Persistor = persistStore(Store);
-export default rootReducer;
