@@ -18,5 +18,17 @@
   "authorName": "Geoffrey Bauqué",
   "courseName": "Développement Mobile",
   "notFound": "Pas de résultat!",
-  "locatePermissionNotProvided": "Vous n'avez pas autorisé la localisation!"
+  "locatePermissionNotProvided": "Vous n'avez pas autorisé la localisation!",
+  "paramLng": "Langage",
+  "paramStandard": "Standard",
+  "paramImperial": "Impériale",
+  "paramUnits": "Unité",
+  "paramMetric": "Métrique",
+  "paramReset": "Réinitialisation des paramètres",
+  "areYouSure": "Êtes-vous sûr ?",
+  "alertTitle": "Votre attention s'il-vous-plaît",
+  "alertLngMessage": "Le changement de langue vous fera revenir au menu principal",
+  "alertResetMessage": "Vos données sauvegardées seront perdues",
+  "yes": "Oui",
+  "no": "Non"
 }

@@ -18,5 +18,17 @@
   "authorName": "Geoffrey Bauqué",
   "courseName": "Mobile development",
   "notFound": "Not found!",
-  "locatePermissionNotProvided": "Locate permission not provided!"
+  "locatePermissionNotProvided": "Locate permission not provided!",
+  "paramLng": "Language",
+  "paramStandard": "Standard",
+  "paramImperial": "Imperial",
+  "paramUnits": "Unit",
+  "paramMetric": "Metric",
+  "paramReset": "Reset parameters",
+  "areYouSure": "Are you sure ?",
+  "alertTitle": "Attention please",
+  "alertLngMessage": "This change will make you navigate through the search main screen",
+  "alertResetMessage": "This will cause all your preferences to be re-initialized",
+  "yes": "Yes",
+  "no": "No"
 }

@@ -66,7 +66,7 @@ const FavCitiesScreen = ({ navigation, favCities }) => {
 
 const mapStateToProps = (state) => {
   return {
-    favCities: state.favoriteCitiesIds,
+    favCities: state.favCitiesReducer.favoriteCitiesIds,
     language: state.userPreference.location,
   };
 };

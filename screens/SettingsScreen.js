@@ -1,33 +1,136 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
-import Colors from "../definitions/Colors.js";
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
 import { Picker } from "@react-native-picker/picker";
+import i18n from "i18n-js";
+import AlertAsync from "react-native-alert-async";
+import { FontAwesome } from "@expo/vector-icons";
 
-const SettingsScreen = ({ language, dispatch }) => {
-  const changeLang = (itemValue) => {
-    dispatch({ type: "CHANGE_LANGUAGE", value: itemValue });
+class SettingsScreen extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  changeLang = (lng) => {
+    this.props.dispatch({ type: "CHANGE_LANGUAGE", value: lng });
   };
 
-  return (
-    <View style={styles.container}>
-      <Picker
-        selectedValue={language}
-        style={{ height: 60, width: 150 }}
-        onValueChange={(itemValue) => {
-          changeLang(itemValue);
-        }}
-      >
-        <Picker.Item label='🇫🇷 Français' value='fr' />
-        <Picker.Item label='🇬🇧 English' value='en' />
-      </Picker>
-    </View>
-  );
-};
+  changeUnits = (unit) => {
+    this.props.dispatch({ type: "CHANGE_UNITS", value: unit });
+  };
+
+  restoreApp = (unit) => {
+    this.props.dispatch({ type: "RESTORE_APP", value: unit });
+  };
+
+  onLanguageChange = async (lng) => {
+    if (lng != this.props.language) {
+      const choice = await AlertAsync(
+        i18n.t("alertTitle"),
+        i18n.t("alertLngMessage"),
+        [
+          { text: i18n.t("yes"), onPress: () => "yes" },
+          { text: i18n.t("no"), onPress: () => Promise.resolve("no") },
+        ],
+        {
+          cancelable: true,
+          onDismiss: () => "no",
+        }
+      );
+
+      if (choice === "yes") {
+        this.changeLang(lng);
+      }
+    }
+  };
+
+  onResetApp = async () => {
+    const choice = await AlertAsync(
+      i18n.t("alertTitle"),
+      i18n.t("areYouSure") + " " + i18n.t("alertResetMessage"),
+      [
+        { text: i18n.t("yes"), onPress: () => "yes" },
+        { text: i18n.t("no"), onPress: () => Promise.resolve("no") },
+      ],
+      {
+        cancelable: true,
+        onDismiss: () => "no",
+      }
+    );
+
+    if (choice === "yes") {
+      this.restoreApp();
+    }
+  };
+
+  render() {
+    const { language, units } = this.props;
+    return (
+      <View style={styles.container}>
+        <View style={styles.parameters}>
+          <View style={styles.parameter}>
+            <View style={styles.parameterLabelContainer}>
+              <Text style={styles.parameterLabel}>{i18n.t("paramLng")}</Text>
+            </View>
+            <View style={styles.paramInput}>
+              <Picker
+                selectedValue={language}
+                style={styles.picker}
+                onValueChange={(itemValue) => {
+                  this.onLanguageChange(itemValue);
+                }}
+              >
+                <Picker.Item label='Français' value='fr' />
+                <Picker.Item label='English' value='en' />
+              </Picker>
+            </View>
+          </View>
+          <View style={styles.parameter}>
+            <View style={styles.parameterLabelContainer}>
+              <Text style={styles.parameterLabel}>{i18n.t("paramUnits")}</Text>
+            </View>
+            <View style={styles.paramInput}>
+              <Picker
+                selectedValue={units}
+                style={styles.picker}
+                onValueChange={(lng) => {
+                  this.changeUnits(lng);
+                }}
+              >
+                <Picker.Item label={i18n.t("paramMetric")} value='metric' />
+                <Picker.Item label={i18n.t("paramStandard")} value='standard' />
+                <Picker.Item label={i18n.t("paramImperial")} value='imperial' />
+              </Picker>
+            </View>
+          </View>
+          <TouchableOpacity
+            onPress={() => {
+              this.onResetApp();
+            }}
+          >
+            <View style={styles.parameter}>
+              <View style={styles.parameterLabelContainer}>
+                <Text style={styles.parameterLabel}>
+                  {i18n.t("paramReset")}
+                </Text>
+              </View>
+              <FontAwesome
+                name='trash'
+                color={"black"}
+                style={styles.iconInput}
+              />
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+}
 
 const mapStateToProps = (state) => {
   return {
     language: state.userPreference.location,
+    units: state.userPreference.unit,
   };
 };
 
@@ -36,80 +139,33 @@ export default connect(mapStateToProps)(SettingsScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  innerContainer: {
+    marginBottom: 16,
     paddingHorizontal: 12,
-    paddingVertical: 16,
-  },
-  containerLoading: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  thumbnail: {
-    height: 180,
-    backgroundColor: Colors.mainGreen,
-    borderTopLeftRadius: 3,
-    borderTopRightRadius: 3,
-  },
-  errorImg: {
-    height: 128,
-    alignItems: "center",
-    justifyContent: "center",
-    borderTopLeftRadius: 3,
-    borderTopRightRadius: 3,
-    backgroundColor: "white",
-  },
-  identityContainerTop: {
-    marginTop: 5,
-    padding: 12,
-    borderRadius: 5,
-    backgroundColor: "white",
-    flexDirection: "row",
-  },
-  identityContainerBottom: {
     marginTop: 16,
-    elevation: 1,
-    borderRadius: 3,
-    padding: 12,
-    backgroundColor: "white",
   },
-  identityRestaurant: {
-    flex: 4,
-  },
-  name: {
-    fontSize: 16,
-    color: "black",
-    fontWeight: "bold",
-  },
-  content: {
-    fontSize: 16,
-  },
-  reviewRestaurant: {
+  parameters: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
   },
-  containerNote: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 3,
+  parameter: {
     flexDirection: "row",
-    alignItems: "flex-end",
+    justifyContent: "space-between",
+    marginVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e9e7e7",
+    height: 40,
   },
-  textNote: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 16,
+  paramLabelContainer: { flex: 1, flexDirection: "row" },
+  parameterLabel: { fontSize: 18 },
+  paramInput: {
+    marginTop: -18,
+    marginLeft: 10,
   },
-  textMaxNote: {
-    fontSize: 12,
-    marginLeft: 3,
-    color: "white",
+  iconInput: {
+    fontSize: 24,
+    marginHorizontal: 16,
   },
-  title: {
-    marginTop: 16,
-    color: Colors.mainGreen,
-    fontWeight: "bold",
+  picker: {
+    height: 60,
+    width: 140,
   },
 });
