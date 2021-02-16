@@ -1,8 +1,23 @@
 import moment from "moment";
 import i18n from "i18n-js";
+import { unix } from "moment";
 
 export const returnDate = (timestamp) => {
   return moment.unix(timestamp).format("DD/M");
+};
+
+export const returnDateTime = (timestamp) => {
+  return moment.unix(timestamp).format("DD/MM HH:mm");
+};
+
+export const returnHour = (timestamp) => {
+  return moment.unix(timestamp).format("HH:mm");
+};
+
+export const isADayAfter = (input) => {
+  let date = moment.unix().add(1, "d");
+  const dateToCheck = moment.unix(input);
+  return dateToCheck.isAfter(date);
 };
 
 export const now = () => {

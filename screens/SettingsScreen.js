@@ -1,30 +1,49 @@
-import React from "react";
-import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  SafeAreaView,
+  Modal,
+  Linking,
+  Button,
+} from "react-native";
 import { connect } from "react-redux";
 import { Picker } from "@react-native-picker/picker";
 import i18n from "i18n-js";
 import AlertAsync from "react-native-alert-async";
-import { FontAwesome } from "@expo/vector-icons";
+import {
+  FontAwesome,
+  Foundation,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
+import YoutubePlayer from "react-native-youtube-iframe";
 
-class SettingsScreen extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+const SettingsScreen = ({ language, units, dispatch }) => {
+  const [stopTouchingMe, setStopTouchingMe] = useState(false);
+  const [stopTouchingMeCpt, setStopTouchingMeCpt] = useState(0);
 
-  changeLang = (lng) => {
-    this.props.dispatch({ type: "CHANGE_LANGUAGE", value: lng });
+  useEffect(() => {
+    if (stopTouchingMeCpt > 5) {
+      setStopTouchingMe(true);
+    }
+  }, [stopTouchingMeCpt]);
+
+  const changeLang = (lng) => {
+    dispatch({ type: "CHANGE_LANGUAGE", value: lng });
   };
 
-  changeUnits = (unit) => {
-    this.props.dispatch({ type: "CHANGE_UNITS", value: unit });
+  const changeUnits = (unit) => {
+    dispatch({ type: "CHANGE_UNITS", value: unit });
   };
 
-  restoreApp = (unit) => {
-    this.props.dispatch({ type: "RESTORE_APP", value: unit });
+  const restoreApp = (unit) => {
+    dispatch({ type: "RESTORE_APP", value: unit });
   };
 
-  onLanguageChange = async (lng) => {
-    if (lng != this.props.language) {
+  const onLanguageChange = async (lng) => {
+    if (lng != language) {
       const choice = await AlertAsync(
         i18n.t("alertTitle"),
         i18n.t("alertLngMessage"),
@@ -39,12 +58,12 @@ class SettingsScreen extends React.Component {
       );
 
       if (choice === "yes") {
-        this.changeLang(lng);
+        changeLang(lng);
       }
     }
   };
 
-  onResetApp = async () => {
+  const onResetApp = async () => {
     const choice = await AlertAsync(
       i18n.t("alertTitle"),
       i18n.t("areYouSure") + " " + i18n.t("alertResetMessage"),
@@ -59,73 +78,136 @@ class SettingsScreen extends React.Component {
     );
 
     if (choice === "yes") {
-      this.restoreApp();
+      restoreApp();
     }
   };
 
-  render() {
-    const { language, units } = this.props;
+  const incrementCounter = () => {
+    setStopTouchingMeCpt(stopTouchingMeCpt + 1);
+  };
+
+  const handleChangeState = (event) => {
+    if (event == "ended") {
+      setStopTouchingMe(false);
+      setStopTouchingMeCpt(0);
+    }
+  };
+
+  const OpenURLButton = ({ url, children }) => {
+    const handlePress = useCallback(async () => {
+      const supported = await Linking.canOpenURL(url);
+
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        Alert.alert(`Don't know how to open this URL: ${url}`);
+      }
+    }, [url]);
+
     return (
-      <View style={styles.container}>
-        <View style={styles.parameters}>
+      <MaterialCommunityIcons
+        name={children}
+        size={36}
+        color='black'
+        onPress={handlePress}
+      />
+    );
+  };
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.parameters}>
+        <View style={styles.parameter}>
+          <View style={styles.parameterLabelContainer}>
+            <Text style={styles.parameterLabel}>{i18n.t("paramLng")}</Text>
+          </View>
+          <View style={styles.paramInput}>
+            <Picker
+              selectedValue={language}
+              style={styles.picker}
+              onValueChange={(itemValue) => {
+                onLanguageChange(itemValue);
+              }}
+            >
+              <Picker.Item label='Français' value='fr' />
+              <Picker.Item label='English' value='en' />
+            </Picker>
+          </View>
+        </View>
+        <View style={styles.parameter}>
+          <View style={styles.parameterLabelContainer}>
+            <Text style={styles.parameterLabel}>{i18n.t("paramUnits")}</Text>
+          </View>
+          <View style={styles.paramInput}>
+            <Picker
+              selectedValue={units}
+              style={styles.picker}
+              onValueChange={(lng) => {
+                changeUnits(lng);
+              }}
+            >
+              <Picker.Item label={i18n.t("paramMetric")} value='metric' />
+              <Picker.Item label={i18n.t("paramStandard")} value='standard' />
+              <Picker.Item label={i18n.t("paramImperial")} value='imperial' />
+            </Picker>
+          </View>
+        </View>
+        <TouchableOpacity
+          onPress={() => {
+            onResetApp();
+          }}
+        >
           <View style={styles.parameter}>
             <View style={styles.parameterLabelContainer}>
-              <Text style={styles.parameterLabel}>{i18n.t("paramLng")}</Text>
+              <Text style={styles.parameterLabel}>{i18n.t("paramReset")}</Text>
             </View>
-            <View style={styles.paramInput}>
-              <Picker
-                selectedValue={language}
-                style={styles.picker}
-                onValueChange={(itemValue) => {
-                  this.onLanguageChange(itemValue);
-                }}
-              >
-                <Picker.Item label='Français' value='fr' />
-                <Picker.Item label='English' value='en' />
-              </Picker>
-            </View>
+            <FontAwesome
+              name='trash'
+              color={"black"}
+              style={styles.iconInput}
+            />
           </View>
-          <View style={styles.parameter}>
-            <View style={styles.parameterLabelContainer}>
-              <Text style={styles.parameterLabel}>{i18n.t("paramUnits")}</Text>
-            </View>
-            <View style={styles.paramInput}>
-              <Picker
-                selectedValue={units}
-                style={styles.picker}
-                onValueChange={(lng) => {
-                  this.changeUnits(lng);
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            incrementCounter();
+          }}
+        >
+          {stopTouchingMe ? (
+            <View style={styles.modal}>
+              <YoutubePlayer
+                height={250}
+                videoId={"nQvdCxuqekc"}
+                play={true}
+                forceAndroidAutoplay={true}
+                onChangeState={(event) => {
+                  handleChangeState(event);
                 }}
-              >
-                <Picker.Item label={i18n.t("paramMetric")} value='metric' />
-                <Picker.Item label={i18n.t("paramStandard")} value='standard' />
-                <Picker.Item label={i18n.t("paramImperial")} value='imperial' />
-              </Picker>
-            </View>
-          </View>
-          <TouchableOpacity
-            onPress={() => {
-              this.onResetApp();
-            }}
-          >
-            <View style={styles.parameter}>
-              <View style={styles.parameterLabelContainer}>
-                <Text style={styles.parameterLabel}>
-                  {i18n.t("paramReset")}
-                </Text>
-              </View>
-              <FontAwesome
-                name='trash'
-                color={"black"}
-                style={styles.iconInput}
               />
             </View>
-          </TouchableOpacity>
-        </View>
+          ) : (
+            <View style={styles.parameter}>
+              <View style={styles.parameterLabelContainer}>
+                <Text style={styles.parameterLabel}>Version</Text>
+              </View>
+              <Text style={{ marginHorizontal: 16 }}>1.0</Text>
+            </View>
+          )}
+        </TouchableOpacity>
       </View>
-    );
-  }
-}
+      <View style={styles.contactContainer}>
+        <OpenURLButton
+          url={"https://github.com/sQmmy/WhatsTheWeather"}
+          children={"github"}
+        ></OpenURLButton>
+        <OpenURLButton
+          url={"mailto:geoffrey.0597@gmail.com"}
+          children={"gmail"}
+        ></OpenURLButton>
+      </View>
+    </View>
+  );
+};
 
 const mapStateToProps = (state) => {
   return {
@@ -141,7 +223,12 @@ const styles = StyleSheet.create({
     flex: 1,
     marginBottom: 16,
     paddingHorizontal: 12,
-    marginTop: 16,
+    marginTop: 100,
+    justifyContent: "space-between",
+  },
+  contactContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
   },
   parameters: {
     flex: 1,

@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, FlatList, Text } from "react-native";
 import { connect } from "react-redux";
 import DisplayError from "../components/DisplayError";
 import * as API from "../api/openweather";
 import CityListItem from "../components/CityListItem";
 import { LinearGradient } from "expo-linear-gradient";
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 
 const FavCitiesScreen = ({ navigation, language, unit, favCities }) => {
   const [cities, setCities] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     refreshFavCities();
@@ -18,6 +20,7 @@ const FavCitiesScreen = ({ navigation, language, unit, favCities }) => {
   const refreshFavCities = async () => {
     setIsRefreshing(true);
     setIsError(false);
+    setIsLoading(true);
     let cities = [];
     try {
       for (const id of favCities) {
@@ -30,6 +33,7 @@ const FavCitiesScreen = ({ navigation, language, unit, favCities }) => {
         );
         cities.push(completeResult);
       }
+      setIsLoading(false);
       setCities(cities);
     } catch (error) {
       setIsError(true);
@@ -63,6 +67,23 @@ const FavCitiesScreen = ({ navigation, language, unit, favCities }) => {
         <View style={styles.secondContainer}>
           {isError ? (
             <DisplayError message='Impossible de récupérer les villes' />
+          ) : isLoading ? (
+            <FlatList
+              data={favCities}
+              keyExtractor={(item) => item.toString()}
+              renderItem={() => (
+                <SkeletonPlaceholder
+                  backgroundColor={"#d8d9d9bf"}
+                  highlightColor={"#a2b4bee3"}
+                >
+                  <SkeletonPlaceholder.Item
+                    height={150}
+                    borderRadius={16}
+                    marginVertical={6}
+                  />
+                </SkeletonPlaceholder>
+              )}
+            />
           ) : (
             <FlatList
               data={cities}

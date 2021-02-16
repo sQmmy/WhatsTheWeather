@@ -1,11 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import {
-  createDrawerNavigator,
-  DrawerContentScrollView,
-  DrawerItem,
-} from "@react-navigation/drawer";
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { I18nManager, SafeAreaView, StyleSheet, View } from "react-native";
 import * as Localization from "expo-localization";
 import { connect } from "react-redux";
 import i18n from "i18n-js";
@@ -15,9 +11,13 @@ import FavCitiesScreen from "../screens/FavCitiesScreen";
 import SearchScreen from "../screens/SearchScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import Colors from "../definitions/Colors";
+import MapScreen from "../screens/MapScreen";
 
 const SearchNavigation = createStackNavigator();
-const DrawerNavigation = createDrawerNavigator();
+const FavNavigation = createStackNavigator();
+const SettingNavigation = createStackNavigator();
+const MapNavigation = createStackNavigator();
+const TabNavigation = createBottomTabNavigator();
 
 const Navigation = ({ language }) => {
   i18n.translations = {
@@ -28,23 +28,58 @@ const Navigation = ({ language }) => {
   i18n.locale = language || Localization.locale;
   i18n.fallbacks = true;
 
-  const NavigationDrawerStructure = (props) => {
-    const toggleDrawer = () => {
-      props.navigationProps.toggleDrawer();
-    };
-
+  function settingsStackScreens({ navigation }) {
     return (
-      <View style={{ flexDirection: "row" }}>
-        <FontAwesome.Button
-          onPress={() => toggleDrawer()}
-          name='bars'
-          backgroundColor={"transparent"}
-          color={"white"}
-          style={{ marginLeft: 8 }}
-        ></FontAwesome.Button>
-      </View>
+      <SettingNavigation.Navigator initialRouteName='ViewSettingsScreen'>
+        <SettingNavigation.Screen
+          name='ViewSettingsScreen'
+          component={SettingsScreen}
+          options={{
+            headerShown: true,
+            headerTransparent: true,
+            headerTitleStyle: "black",
+            headerTintColor: "black",
+            headerTitleAlign: "center",
+            headerTitle: i18n.t("menuTopSettings"),
+          }}
+        ></SettingNavigation.Screen>
+      </SettingNavigation.Navigator>
     );
-  };
+  }
+
+  function mapStackScreens({ navigation }) {
+    return (
+      <MapNavigation.Navigator initialRouteName='ViewMapScreen'>
+        <MapNavigation.Screen
+          name='ViewMapScreen'
+          component={MapScreen}
+          options={{
+            headerShown: true,
+            headerTransparent: true,
+            headerTitleStyle: "#d8d5d5",
+            headerTintColor: "#020b5f",
+            headerTitleAlign: "center",
+            headerTitle: i18n.t("menuTopMap"),
+          }}
+        ></MapNavigation.Screen>
+        <MapNavigation.Screen
+          name='ViewCityScreen'
+          component={CityScreen}
+          options={{
+            headerTitle: "",
+            headerShown: true,
+            headerTransparent: true,
+            headerTitleStyle: Colors.white,
+            headerTintColor: Colors.white,
+            headerTitleAlign: "center",
+          }}
+          header={{
+            style: styles.transparentHeader,
+          }}
+        />
+      </MapNavigation.Navigator>
+    );
+  }
 
   function searchStackScreens({ navigation }) {
     return (
@@ -53,9 +88,6 @@ const Navigation = ({ language }) => {
           name='ViewSearchScreen'
           component={SearchScreen}
           options={{
-            headerLeft: () => (
-              <NavigationDrawerStructure navigationProps={navigation} />
-            ),
             headerTitle: i18n.t("menuTopSearch"),
             headerShown: true,
             headerTransparent: true,
@@ -82,21 +114,18 @@ const Navigation = ({ language }) => {
             style: styles.transparentHeader,
           }}
         />
-        <SearchNavigation.Screen
-          name='ViewSettingsScreen'
-          component={SettingsScreen}
-          options={{
-            headerTitle: i18n.t("menuTopSettings"),
-          }}
-        />
-        <SearchNavigation.Screen
+      </SearchNavigation.Navigator>
+    );
+  }
+
+  function favStackScreens({ navigation }) {
+    return (
+      <FavNavigation.Navigator initialRouteName='ViewFavScreen'>
+        <FavNavigation.Screen
           name='ViewFavScreen'
           component={FavCitiesScreen}
           options={{
             headerTitle: i18n.t("menuTopFav"),
-            headerLeft: () => (
-              <NavigationDrawerStructure navigationProps={navigation} />
-            ),
             headerShown: true,
             headerTransparent: true,
             headerTitleStyle: Colors.white,
@@ -107,65 +136,100 @@ const Navigation = ({ language }) => {
             style: styles.transparentHeader,
           }}
         />
-      </SearchNavigation.Navigator>
-    );
-  }
-
-  function CustomDrawerContent(props) {
-    return (
-      <DrawerContentScrollView
-        {...props}
-        contentContainerStyle={styles.container}
-      >
-        <SafeAreaView forceInset={{ top: "always", horizontal: "never" }}>
-          <DrawerItem
-            icon={() => getIcon("search")}
-            label={i18n.t("menuTopSearch")}
-            onPress={() => props.navigation.navigate("ViewSearchScreen")}
-          />
-          <DrawerItem
-            icon={() => getIcon("star")}
-            label={i18n.t("menuTopFav")}
-            onPress={() => props.navigation.navigate("ViewFavScreen")}
-          />
-        </SafeAreaView>
-        <DrawerItem
-          icon={() => getIcon("gear")}
-          label={i18n.t("menuTopSettings")}
-          onPress={() => props.navigation.navigate("ViewSettingsScreen")}
-          style={styles.bottomButton}
+        <FavNavigation.Screen
+          name='ViewCityScreen'
+          component={CityScreen}
+          options={{
+            headerTitle: "",
+            headerShown: true,
+            headerTransparent: true,
+            headerTitleStyle: Colors.white,
+            headerTintColor: Colors.white,
+            headerTitleAlign: "center",
+          }}
+          header={{
+            style: styles.transparentHeader,
+          }}
         />
-      </DrawerContentScrollView>
+      </FavNavigation.Navigator>
     );
   }
-
-  const getIcon = (icon_name) => {
-    return (
-      <FontAwesome.Button
-        name={icon_name}
-        backgroundColor={"white"}
-        color={"black"}
-        style={{ marginLeft: 8 }}
-      ></FontAwesome.Button>
-    );
-  };
 
   return (
-    <DrawerNavigation.Navigator
-      drawerType={"slide"}
-      drawerContentOptions={{
-        activeTintColor: "#6441d8",
-        itemStyle: { marginVertical: 5 },
+    <TabNavigation.Navigator
+      tabBarOptions={{
+        activeTintColor: "#ffffff",
+        activeBackgroundColor: "#484747",
+        inactiveBackgroundColor: "transparent",
+        backgroundColor: "transparent",
+        style: {
+          backgroundColor: "#3b3a3a",
+        },
       }}
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
-      initialRouteName={i18n.t("menuBottomSearch")}
     >
-      <DrawerNavigation.Screen
+      <TabNavigation.Screen
         name={i18n.t("menuBottomSearch")}
-        options={{ drawerLabel: i18n.t("menuBottomSearch") }}
         component={searchStackScreens}
+        options={() => ({
+          tabBarIcon: () => (
+            <FontAwesome
+              name={"search"}
+              backgroundColor={"transparent"}
+              color={"white"}
+              size={16}
+              style={{ marginTop: 4 }}
+            ></FontAwesome>
+          ),
+        })}
       />
-    </DrawerNavigation.Navigator>
+      <TabNavigation.Screen
+        name={i18n.t("menuTopMap")}
+        component={mapStackScreens}
+        options={{
+          headerTitle: i18n.t("menuTopMap"),
+          tabBarIcon: () => (
+            <FontAwesome
+              name={"globe"}
+              backgroundColor={"transparent"}
+              color={"white"}
+              size={16}
+              style={{ marginTop: 4 }}
+            ></FontAwesome>
+          ),
+        }}
+      />
+      <TabNavigation.Screen
+        name={i18n.t("menuBottomFav")}
+        component={favStackScreens}
+        options={() => ({
+          tabBarIcon: () => (
+            <FontAwesome
+              name={"star"}
+              backgroundColor={"transparent"}
+              color={"white"}
+              size={16}
+              style={{ marginTop: 4 }}
+            ></FontAwesome>
+          ),
+        })}
+      />
+      <TabNavigation.Screen
+        name={i18n.t("menuTopSettings")}
+        component={settingsStackScreens}
+        options={{
+          headerTitle: i18n.t("menuTopSettings"),
+          tabBarIcon: () => (
+            <FontAwesome
+              name={"cog"}
+              backgroundColor={"transparent"}
+              color={"white"}
+              size={16}
+              style={{ marginTop: 4 }}
+            ></FontAwesome>
+          ),
+        }}
+      />
+    </TabNavigation.Navigator>
   );
 };
 

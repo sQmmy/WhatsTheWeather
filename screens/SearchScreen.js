@@ -30,14 +30,6 @@ const SearchScreen = ({ language, unit, navigation, favCities }) => {
   const [errorMsg, setErrorMsg] = useState("");
   const [location, setLocation] = useState(null);
 
-  useEffect(() => {
-    (async () => {
-      if (location !== null) {
-        await requestCityForecastByLatLon();
-      }
-    })();
-  }, [location]);
-
   const isFavoriteCity = (cityId) => {
     if (favCities.findIndex((i) => i === cityId) !== -1) {
       return true;
@@ -59,7 +51,10 @@ const SearchScreen = ({ language, unit, navigation, favCities }) => {
     setIsLoading(true);
     let loc = await requestLocationToDevice();
     if (loc != null) {
-      setLocation(loc);
+      await requestCityForecastByLatLon(
+        loc.coords.latitude,
+        loc.coords.longitude
+      );
     }
   };
 
@@ -98,12 +93,12 @@ const SearchScreen = ({ language, unit, navigation, favCities }) => {
     setIsLoading(false);
   };
 
-  const requestCityForecastByLatLon = async () => {
+  const requestCityForecastByLatLon = async (lat, lon) => {
     setIsError(false);
     try {
       const searchResult = await API.getForecastForLatLon(
-        location.coords.latitude,
-        location.coords.longitude,
+        lat,
+        lon,
         language,
         unit
       );
@@ -129,7 +124,6 @@ const SearchScreen = ({ language, unit, navigation, favCities }) => {
     >
       <View style={styles.container}>
         <View style={styles.secondContainer}>
-          {/* <Text style={styles.title}>{i18n.t("location")}</Text> */}
           <View style={styles.topSearchInput}>
             <View style={styles.elementInput}>
               <TextInput
@@ -171,6 +165,11 @@ const SearchScreen = ({ language, unit, navigation, favCities }) => {
                 {i18n.t("searchButton")}
               </FontAwesome.Button>
             </View>
+            {cityName.length < 1 ? (
+              <Text style={styles.inputTip}>{i18n.t("searchInputTip")}</Text>
+            ) : (
+              <Text style={styles.inputTip}></Text>
+            )}
             <View style={styles.buttonStyle}>
               <FontAwesome.Button
                 name='map-marker'
@@ -230,6 +229,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: 50,
+  },
+  inputTip: {
+    fontStyle: "italic",
+    color: "#c10101",
+    fontSize: 12,
   },
   secondContainer: {
     flex: 1,

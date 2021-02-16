@@ -8,7 +8,7 @@ import Navigation from "./navigation/Navigation";
 import * as SplashScreen from "expo-splash-screen";
 import { Animated, Easing, StyleSheet, Text, View } from "react-native";
 import i18n from "i18n-js";
-
+import { enableScreens } from "react-native-screens";
 export default class App extends React.Component {
   state = {
     appIsReady: false,
@@ -75,6 +75,7 @@ export default class App extends React.Component {
 
   async componentDidMount() {
     try {
+      enableScreens();
       await SplashScreen.preventAutoHideAsync();
       this.fadeIn();
     } catch (e) {

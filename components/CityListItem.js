@@ -10,13 +10,16 @@ import {
   Image,
 } from "react-native";
 import Flag from "react-native-flags";
+import { connect } from "react-redux";
 import { getIconUri } from "../api/openweather";
+import * as TOOLBOX from "../utils/toolbox.js";
 
 const CityListItem = ({
   onClick,
   favCities,
   isFav = false,
   city,
+  unit,
   weatherList,
 }) => {
   const returnDate = (timestamp) => {
@@ -77,7 +80,8 @@ const CityListItem = ({
                 <View style={styles.forecastElement}>
                   <Text style={styles.elementText}>
                     {Math.round(item.main.temp_min)}/
-                    {Math.round(item.main.temp_max)}°C
+                    {Math.round(item.main.temp_max)}
+                    {TOOLBOX.returnWeatherUnit(unit)}
                   </Text>
                   <Image
                     source={{
@@ -98,7 +102,14 @@ const CityListItem = ({
   );
 };
 
-export default CityListItem;
+const mapStateToProps = (state) => {
+  return {
+    language: state.userPreference.location,
+    unit: state.userPreference.unit,
+  };
+};
+
+export default connect(mapStateToProps)(CityListItem);
 
 const styles = StyleSheet.create({
   container: {
