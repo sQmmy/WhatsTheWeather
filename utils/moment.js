@@ -3,7 +3,7 @@ import i18n from "i18n-js";
 import { unix } from "moment";
 
 export const returnDate = (timestamp) => {
-  return moment.unix(timestamp).format("DD/M");
+  return moment.unix(timestamp).format("DD/MM");
 };
 
 export const returnDateTime = (timestamp) => {
@@ -31,6 +31,9 @@ export const returnDayName = (timestamp) => {
   }
   if (day == moment().add(1, "days").format("DD/MM/YYYY")) {
     return i18n.t("tomorrow");
+  }
+  if (day == moment().subtract(1, "days").format("DD/MM/YYYY")) {
+    return i18n.t("yesterday");
   }
   return i18n.t(moment.unix(timestamp).format("dddd").toLowerCase());
 };

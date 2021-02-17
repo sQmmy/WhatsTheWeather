@@ -11,7 +11,11 @@ import {
   Dimensions,
 } from "react-native";
 import { connect } from "react-redux";
-import { Feather, FontAwesome } from "@expo/vector-icons";
+import {
+  Feather,
+  FontAwesome,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import * as API from "../api/openweather.js";
 import * as MOMENT from "../utils/moment.js";
@@ -417,7 +421,98 @@ const CityScreen = ({
               colors={["#65a1e79c", "#65a1e79c", "#65a1e7de"]}
               style={{ borderRadius: 16, marginTop: 6 }}
             >
-              <View style={styles.alertsContainer}></View>
+              <View style={styles.alertsContainer}>
+                <View style={styles.alertListContainer}>
+                  <View
+                    style={{
+                      justifyContent: "center",
+                      flexDirection: "row",
+                      borderBottomWidth: 0.7,
+                      borderBottomColor: "#5a5858eb",
+                    }}
+                  >
+                    <Text style={styles.containerDarkTitle}>
+                      {i18n.t("alerts")}
+                    </Text>
+                    <MaterialCommunityIcons
+                      name='alert-octagon'
+                      size={24}
+                      color='#ff0000c9'
+                    />
+                  </View>
+                  {city.alerts != null ? (
+                    city.alerts.map((alert, index) => {
+                      return (
+                        <View style={styles.alertElement}>
+                          <View style={styles.alertEventContainer}>
+                            <Text
+                              style={{
+                                fontWeight: "bold",
+                                maxWidth: 400,
+                                fontSize: 20,
+                              }}
+                            >
+                              {alert.event}
+                            </Text>
+                            <View style={styles.durationContainer}>
+                              <MaterialCommunityIcons
+                                name='timer-sand'
+                                size={24}
+                                color='#1a151ebf'
+                              />
+                              <View style={styles.durationElementContainer}>
+                                <Text style={styles.durationElementStyle}>
+                                  {MOMENT.returnDayName(alert.start)}{" "}
+                                  {MOMENT.returnDate(alert.start)}{" "}
+                                </Text>
+                                <Text
+                                  style={{
+                                    fontSize: 10,
+                                    alignSelf: "flex-end",
+                                    fontStyle: "italic",
+                                  }}
+                                >
+                                  {MOMENT.returnHour(alert.start)}
+                                </Text>
+                              </View>
+                              <MaterialCommunityIcons
+                                name='arrow-right-bold'
+                                size={24}
+                                color='#1a151ebf'
+                              />
+                              <View style={styles.durationElementContainer}>
+                                <Text style={styles.durationElementStyle}>
+                                  {MOMENT.returnDayName(alert.end)}{" "}
+                                  {MOMENT.returnDate(alert.end)}{" "}
+                                </Text>
+                                <Text
+                                  style={{
+                                    fontSize: 10,
+                                    alignSelf: "flex-end",
+                                    fontStyle: "italic",
+                                  }}
+                                >
+                                  {MOMENT.returnHour(alert.end)}
+                                </Text>
+                              </View>
+                            </View>
+                          </View>
+
+                          <View style={styles.alertDescriptionContainer}>
+                            <Text>{alert.description}</Text>
+                          </View>
+                        </View>
+                      );
+                    })
+                  ) : (
+                    <View style={{ marginVertical: 6 }}>
+                      <Text style={styles.containerDarkTitle}>
+                        {i18n.t("noAlerts")}
+                      </Text>
+                    </View>
+                  )}
+                </View>
+              </View>
             </LinearGradient>
           </View>
         )}
@@ -476,9 +571,29 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   alertsContainer: {
-    height: 300,
     backgroundColor: "#ffffffe6",
     borderRadius: 16,
+    marginBottom: 80,
+  },
+  alertListContainer: {
+    marginHorizontal: 16,
+    marginTop: 16,
+  },
+  alertElement: {
+    marginVertical: 6,
+    borderBottomWidth: 0.5,
+    borderBottomColor: "#47474759",
+    marginBottom: 6,
+  },
+  alertEventContainer: {
+    flexDirection: "column",
+  },
+  alertDescriptionContainer: {
+    maxWidth: 320,
+    alignSelf: "flex-start",
+    marginLeft: 12,
+    marginTop: 12,
+    marginBottom: 12,
   },
   updateText: {
     color: "white",
@@ -487,6 +602,12 @@ const styles = StyleSheet.create({
   containerTitle: {
     color: "#ffffffb3",
     fontWeight: "bold",
+    marginBottom: 10,
+  },
+  containerDarkTitle: {
+    color: "#4d4c4cb8",
+    fontWeight: "bold",
+    fontSize: 16,
     marginBottom: 10,
   },
   favIcon: {
@@ -596,5 +717,17 @@ const styles = StyleSheet.create({
   },
   chartContentContainer: {
     justifyContent: "center",
+  },
+  durationContainer: {
+    flexDirection: "row",
+    alignSelf: "flex-end",
+    marginTop: 10,
+  },
+  durationElementContainer: {
+    marginHorizontal: 6,
+  },
+  durationElementStyle: {
+    color: "#1a151ebf",
+    fontWeight: "bold",
   },
 });

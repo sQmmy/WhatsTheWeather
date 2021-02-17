@@ -34,6 +34,7 @@
   "no": "Non",
   "lastUpdate": "Dernière mise à jour : ",
   "today": "Aujourd'hui",
+  "yesterday": "Hier",
   "tomorrow": "Demain",
   "monday": "Lundi",
   "tuesday": "Mardi",
@@ -56,5 +57,7 @@
   "S": "Sud",
   "SW": "Sud-Ouest",
   "W": "Ouest",
-  "NW": "Nord-Ouest"
+  "NW": "Nord-Ouest",
+  "alerts": "Alertes",
+  "noAlerts": "Pas d'alerte(s) émise(s) par cette ville"
 }

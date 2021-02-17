@@ -88,6 +88,7 @@ const FavCitiesScreen = ({ navigation, language, unit, favCities }) => {
             <FlatList
               data={cities}
               extraData={favCities}
+              showsVerticalScrollIndicator={false}
               keyExtractor={(item) => item.city.id.toString()}
               renderItem={({ item }) => (
                 <View style={styles.cityListItem}>

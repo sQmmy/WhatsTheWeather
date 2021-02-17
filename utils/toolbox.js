@@ -19,7 +19,7 @@ export const returnSpeedUnit = (value, unit) => {
 };
 
 export const returnWindDirection = (degrees) => {
-  var directionArray = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+  var directionArray = ["N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"];
   var direction = Math.round(degrees / 45);
   return directionArray[direction];
 };
