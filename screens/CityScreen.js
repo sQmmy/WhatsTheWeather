@@ -475,7 +475,11 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginTop: 16,
   },
-  alertsContainer: { height: 300 },
+  alertsContainer: {
+    height: 300,
+    backgroundColor: "#ffffffe6",
+    borderRadius: 16,
+  },
   updateText: {
     color: "white",
     fontSize: 8,

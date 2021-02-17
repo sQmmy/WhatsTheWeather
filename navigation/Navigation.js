@@ -1,7 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { I18nManager, SafeAreaView, StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import * as Localization from "expo-localization";
 import { connect } from "react-redux";
 import i18n from "i18n-js";
@@ -47,6 +47,86 @@ const Navigation = ({ language }) => {
     );
   }
 
+  function DefaultNavigator({ navigation }) {
+    return (
+      <TabNavigation.Navigator
+        initialRouteName={i18n.t("menuBottomSearch")}
+        tabBarOptions={{
+          activeTintColor: "#ffffff",
+          activeBackgroundColor: "#484747",
+          inactiveBackgroundColor: "transparent",
+          backgroundColor: "transparent",
+          style: {
+            backgroundColor: "#3b3a3a",
+          },
+        }}
+      >
+        <TabNavigation.Screen
+          name={i18n.t("menuBottomSearch")}
+          component={searchStackScreens}
+          options={() => ({
+            tabBarIcon: () => (
+              <FontAwesome
+                name={"search"}
+                backgroundColor={"transparent"}
+                color={"white"}
+                size={16}
+                style={{ marginTop: 4 }}
+              ></FontAwesome>
+            ),
+          })}
+        />
+        <TabNavigation.Screen
+          name={i18n.t("menuTopMap")}
+          component={mapStackScreens}
+          options={{
+            headerTitle: i18n.t("menuTopMap"),
+            tabBarIcon: () => (
+              <FontAwesome
+                name={"globe"}
+                backgroundColor={"transparent"}
+                color={"white"}
+                size={16}
+                style={{ marginTop: 4 }}
+              ></FontAwesome>
+            ),
+          }}
+        />
+        <TabNavigation.Screen
+          name={i18n.t("menuBottomFav")}
+          component={favStackScreens}
+          options={() => ({
+            tabBarIcon: () => (
+              <FontAwesome
+                name={"star"}
+                backgroundColor={"transparent"}
+                color={"white"}
+                size={16}
+                style={{ marginTop: 4 }}
+              ></FontAwesome>
+            ),
+          })}
+        />
+        <TabNavigation.Screen
+          name={i18n.t("menuTopSettings")}
+          component={settingsStackScreens}
+          options={{
+            headerTitle: i18n.t("menuTopSettings"),
+            tabBarIcon: () => (
+              <FontAwesome
+                name={"cog"}
+                backgroundColor={"transparent"}
+                color={"white"}
+                size={16}
+                style={{ marginTop: 4 }}
+              ></FontAwesome>
+            ),
+          }}
+        />
+      </TabNavigation.Navigator>
+    );
+  }
+
   function mapStackScreens({ navigation }) {
     return (
       <MapNavigation.Navigator initialRouteName='ViewMapScreen'>
@@ -62,21 +142,6 @@ const Navigation = ({ language }) => {
             headerTitle: i18n.t("menuTopMap"),
           }}
         ></MapNavigation.Screen>
-        <MapNavigation.Screen
-          name='ViewCityScreen'
-          component={CityScreen}
-          options={{
-            headerTitle: "",
-            headerShown: true,
-            headerTransparent: true,
-            headerTitleStyle: Colors.white,
-            headerTintColor: Colors.white,
-            headerTitleAlign: "center",
-          }}
-          header={{
-            style: styles.transparentHeader,
-          }}
-        />
       </MapNavigation.Navigator>
     );
   }
@@ -89,21 +154,6 @@ const Navigation = ({ language }) => {
           component={SearchScreen}
           options={{
             headerTitle: i18n.t("menuTopSearch"),
-            headerShown: true,
-            headerTransparent: true,
-            headerTitleStyle: Colors.white,
-            headerTintColor: Colors.white,
-            headerTitleAlign: "center",
-          }}
-          header={{
-            style: styles.transparentHeader,
-          }}
-        />
-        <SearchNavigation.Screen
-          name='ViewCityScreen'
-          component={CityScreen}
-          options={{
-            headerTitle: "",
             headerShown: true,
             headerTransparent: true,
             headerTitleStyle: Colors.white,
@@ -136,100 +186,36 @@ const Navigation = ({ language }) => {
             style: styles.transparentHeader,
           }}
         />
-        <FavNavigation.Screen
-          name='ViewCityScreen'
-          component={CityScreen}
-          options={{
-            headerTitle: "",
-            headerShown: true,
-            headerTransparent: true,
-            headerTitleStyle: Colors.white,
-            headerTintColor: Colors.white,
-            headerTitleAlign: "center",
-          }}
-          header={{
-            style: styles.transparentHeader,
-          }}
-        />
       </FavNavigation.Navigator>
     );
   }
 
   return (
-    <TabNavigation.Navigator
-      tabBarOptions={{
-        activeTintColor: "#ffffff",
-        activeBackgroundColor: "#484747",
-        inactiveBackgroundColor: "transparent",
-        backgroundColor: "transparent",
-        style: {
-          backgroundColor: "#3b3a3a",
-        },
-      }}
-    >
-      <TabNavigation.Screen
-        name={i18n.t("menuBottomSearch")}
-        component={searchStackScreens}
-        options={() => ({
-          tabBarIcon: () => (
-            <FontAwesome
-              name={"search"}
-              backgroundColor={"transparent"}
-              color={"white"}
-              size={16}
-              style={{ marginTop: 4 }}
-            ></FontAwesome>
-          ),
-        })}
-      />
-      <TabNavigation.Screen
-        name={i18n.t("menuTopMap")}
-        component={mapStackScreens}
+    <MapNavigation.Navigator initialRouteName='ViewDefaultScreen'>
+      <MapNavigation.Screen
+        name='ViewDefaultScreen'
+        component={DefaultNavigator}
         options={{
-          headerTitle: i18n.t("menuTopMap"),
-          tabBarIcon: () => (
-            <FontAwesome
-              name={"globe"}
-              backgroundColor={"transparent"}
-              color={"white"}
-              size={16}
-              style={{ marginTop: 4 }}
-            ></FontAwesome>
-          ),
+          headerShown: false,
         }}
-      />
-      <TabNavigation.Screen
-        name={i18n.t("menuBottomFav")}
-        component={favStackScreens}
-        options={() => ({
-          tabBarIcon: () => (
-            <FontAwesome
-              name={"star"}
-              backgroundColor={"transparent"}
-              color={"white"}
-              size={16}
-              style={{ marginTop: 4 }}
-            ></FontAwesome>
-          ),
-        })}
-      />
-      <TabNavigation.Screen
-        name={i18n.t("menuTopSettings")}
-        component={settingsStackScreens}
+      ></MapNavigation.Screen>
+      <MapNavigation.Screen
+        name='ViewCityScreen'
+        component={CityScreen}
         options={{
-          headerTitle: i18n.t("menuTopSettings"),
-          tabBarIcon: () => (
-            <FontAwesome
-              name={"cog"}
-              backgroundColor={"transparent"}
-              color={"white"}
-              size={16}
-              style={{ marginTop: 4 }}
-            ></FontAwesome>
-          ),
+          headerTitle: "",
+          headerShown: true,
+          headerTransparent: true,
+          headerTitleStyle: Colors.white,
+          headerTintColor: Colors.white,
+          headerTitleAlign: "center",
         }}
+        header={{
+          style: styles.transparentHeader,
+        }}
+        tabBarVisible={false}
       />
-    </TabNavigation.Navigator>
+    </MapNavigation.Navigator>
   );
 };
 
