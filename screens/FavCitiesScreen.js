@@ -6,6 +6,7 @@ import * as API from "../api/openweather";
 import CityListItem from "../components/CityListItem";
 import { LinearGradient } from "expo-linear-gradient";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import i18n from "i18n-js";
 
 const FavCitiesScreen = ({ navigation, language, unit, favCities }) => {
   const [cities, setCities] = useState([]);
@@ -84,7 +85,7 @@ const FavCitiesScreen = ({ navigation, language, unit, favCities }) => {
                 </SkeletonPlaceholder>
               )}
             />
-          ) : (
+          ) : cities.length > 0 ? (
             <FlatList
               data={cities}
               extraData={favCities}
@@ -104,6 +105,10 @@ const FavCitiesScreen = ({ navigation, language, unit, favCities }) => {
               refreshing={isRefreshing}
               onRefresh={refreshFavCities}
             />
+          ) : (
+            <View style={styles.noDataContainer}>
+              <Text style={styles.noDataText}>{i18n.t("noDataInFav")}</Text>
+            </View>
           )}
         </View>
       </View>
@@ -125,6 +130,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: 80,
+  },
+  noDataContainer: {
+    flex: 1,
+    marginHorizontal: 16,
+    marginTop: 26,
+  },
+  noDataText: {
+    color: "#ffffffd9",
   },
   secondContainer: {
     flex: 1,

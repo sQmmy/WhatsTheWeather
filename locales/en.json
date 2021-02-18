@@ -59,5 +59,6 @@
   "W": "West",
   "NW": "North-West",
   "alerts": "Alerts",
-  "noAlerts": "No alerts for this city"
+  "noAlerts": "No alerts for this city",
+  "noDataInFav": "No cities have been marked by the user yet"
 }

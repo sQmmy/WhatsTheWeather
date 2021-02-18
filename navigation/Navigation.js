@@ -19,7 +19,7 @@ const SettingNavigation = createStackNavigator();
 const MapNavigation = createStackNavigator();
 const TabNavigation = createBottomTabNavigator();
 
-const Navigation = ({ language }) => {
+const Navigation = ({ language, favCities }) => {
   i18n.translations = {
     fr: require("../locales/fr.json"),
     en: require("../locales/en.json"),
@@ -70,7 +70,7 @@ const Navigation = ({ language }) => {
                 name={"search"}
                 backgroundColor={"transparent"}
                 color={"white"}
-                size={16}
+                size={22}
                 style={{ marginTop: 4 }}
               ></FontAwesome>
             ),
@@ -86,8 +86,10 @@ const Navigation = ({ language }) => {
                 name={"globe"}
                 backgroundColor={"transparent"}
                 color={"white"}
-                size={16}
-                style={{ marginTop: 4 }}
+                size={22}
+                style={{
+                  marginTop: 4,
+                }}
               ></FontAwesome>
             ),
           }}
@@ -96,12 +98,14 @@ const Navigation = ({ language }) => {
           name={i18n.t("menuBottomFav")}
           component={favStackScreens}
           options={() => ({
+            tabBarBadge: favCities.length,
+            tabBarBadgeStyle: { backgroundColor: "#3d82b3" },
             tabBarIcon: () => (
               <FontAwesome
                 name={"star"}
                 backgroundColor={"transparent"}
                 color={"white"}
-                size={16}
+                size={22}
                 style={{ marginTop: 4 }}
               ></FontAwesome>
             ),
@@ -117,7 +121,7 @@ const Navigation = ({ language }) => {
                 name={"cog"}
                 backgroundColor={"transparent"}
                 color={"white"}
-                size={16}
+                size={22}
                 style={{ marginTop: 4 }}
               ></FontAwesome>
             ),
@@ -222,6 +226,7 @@ const Navigation = ({ language }) => {
 const mapStateToProps = (state) => {
   return {
     language: state.userPreference.location,
+    favCities: state.favCitiesReducer.favoriteCitiesIds,
   };
 };
 

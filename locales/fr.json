@@ -59,5 +59,6 @@
   "W": "Ouest",
   "NW": "Nord-Ouest",
   "alerts": "Alertes",
-  "noAlerts": "Pas d'alerte(s) émise(s) par cette ville"
+  "noAlerts": "Pas d'alerte(s) émise(s) par cette ville",
+  "noDataInFav": "Vous n'avez pas encore ajouté de ville(s) à vos favoris"
 }
