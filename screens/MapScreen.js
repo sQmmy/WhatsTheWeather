@@ -76,7 +76,6 @@ const MapScreen = ({
           name='star'
           color={"black"}
           style={styles.favIcon}
-          onPress={unsaveCity}
           size={36}
         />
       );
@@ -86,24 +85,10 @@ const MapScreen = ({
           name='star-o'
           color={"black"}
           style={styles.favIcon}
-          onPress={saveCity}
           size={36}
         />
       );
     }
-  };
-
-  const saveCity = async () => {
-    const action = {
-      type: "SAVE_CITY",
-      value: cityInfo.city.id,
-    };
-    dispatch(action);
-  };
-
-  const unsaveCity = async () => {
-    const action = { type: "POP_CITY", value: cityInfo.city.id };
-    dispatch(action);
   };
 
   return (

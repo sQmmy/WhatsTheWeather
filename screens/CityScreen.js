@@ -6,22 +6,19 @@ import {
   ScrollView,
   RefreshControl,
   ActivityIndicator,
-  FlatList,
   Image,
-  Dimensions,
 } from "react-native";
 import { connect } from "react-redux";
-import {
-  Feather,
-  FontAwesome,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import * as API from "../api/openweather.js";
 import * as MOMENT from "../utils/moment.js";
 import * as TOOLBOX from "../utils/toolbox.js";
 import i18n from "i18n-js";
-import { BarChart } from "react-native-chart-kit";
+import SevenDays from "../components/SevenDays.js";
+import Details from "../components/Details.js";
+import Barchart from "../components/Barchart.js";
+import Alerts from "../components/Alerts.js";
 
 const CityScreen = ({
   language,
@@ -80,10 +77,14 @@ const CityScreen = ({
       );
       setCity(completeResult);
       setBarChartData({
-        labels: completeResult.daily.map((elem) => MOMENT.returnDate(elem.dt)),
+        labels: completeResult.hourly.map((elem) =>
+          MOMENT.returnDateTime(elem.dt, completeResult.timezone_offset)
+        ),
         datasets: [
           {
-            data: completeResult.daily.map((elem) => elem.humidity),
+            data: completeResult.hourly.map((elem) =>
+              elem.pop != null ? Math.round(elem.pop * 100) : null
+            ),
           },
         ],
       });
@@ -205,315 +206,10 @@ const CityScreen = ({
                 />
               </View>
             </View>
-            <LinearGradient
-              colors={["#65a1e79c", "#65a1e79c", "#65a1e7de"]}
-              style={{ borderRadius: 16 }}
-            >
-              <View style={styles.forecastContainer}>
-                <FlatList
-                  showsVerticalScrollIndicator={false}
-                  showsHorizontalScrollIndicator={false}
-                  horizontal={true}
-                  data={city.daily}
-                  keyExtractor={(item) => item.dt.toString()}
-                  renderItem={({ item }) => (
-                    <View style={styles.forecastElement}>
-                      <Text style={styles.forecastDay}>
-                        {MOMENT.returnDayName(item.dt)}
-                      </Text>
-                      <Text style={styles.elementText}>
-                        {MOMENT.returnDate(item.dt)}
-                      </Text>
-                      <Image
-                        source={{
-                          uri: API.getIconUri(item.weather),
-                        }}
-                        style={styles.elementIcon}
-                      />
-                      <Text style={styles.elementText}>
-                        {Math.round(item.temp.min)}/{Math.round(item.temp.max)}
-                        {TOOLBOX.returnWeatherUnit(unit)}
-                      </Text>
-                    </View>
-                  )}
-                />
-              </View>
-            </LinearGradient>
-            <LinearGradient
-              colors={["#65a1e79c", "#65a1e79c", "#65a1e7de"]}
-              style={{ borderRadius: 16, marginTop: 6 }}
-            >
-              <View style={styles.detailsContainer}>
-                <View style={styles.detailsTopContainer}>
-                  <Text style={styles.containerTitle}>{i18n.t("details")}</Text>
-                </View>
-                <View style={styles.detailsContentContainer}>
-                  <View style={styles.detailsLeftElement}>
-                    <View style={styles.detailsElement}>
-                      <View style={styles.detailsKeyValue}>
-                        <View style={styles.detailsKeyText}>
-                          <Text
-                            style={{
-                              color: "#cfcfcf",
-                              fontSize: 10,
-                            }}
-                          >
-                            {i18n.t("feelsLike")}
-                          </Text>
-                        </View>
-                        <View style={styles.detailsValueText}>
-                          <Text style={{ color: "white" }}>
-                            {Math.round(city.current.feels_like)}
-                            {TOOLBOX.returnWeatherUnit(unit)}
-                          </Text>
-                        </View>
-                      </View>
-                      <View style={styles.detailsIcon}>
-                        <FontAwesome
-                          name='thermometer-full'
-                          color={"white"}
-                          size={28}
-                          style={{ marginLeft: 6 }}
-                        />
-                      </View>
-                    </View>
-                  </View>
-                  <View style={styles.detailsRightElement}>
-                    <View style={styles.detailsElement}>
-                      <View style={styles.detailsKeyValue}>
-                        <View style={styles.detailsKeyText}>
-                          <Text
-                            style={{
-                              color: "#cfcfcf",
-                              fontSize: 10,
-                            }}
-                          >
-                            {i18n.t(
-                              TOOLBOX.returnWindDirection(city.current.wind_deg)
-                            )}
-                          </Text>
-                        </View>
-                        <View style={styles.detailsValueText}>
-                          <Text style={{ color: "white" }}>
-                            {TOOLBOX.returnSpeedUnit(
-                              Math.round(city.current.wind_speed),
-                              unit
-                            )}
-                          </Text>
-                        </View>
-                      </View>
-                      <View style={styles.detailsIcon}>
-                        <Feather
-                          name='wind'
-                          size={28}
-                          color='white'
-                          style={{ width: 30 }}
-                        />
-                      </View>
-                    </View>
-                  </View>
-                  <View style={styles.detailsLeftElement}>
-                    <View style={styles.detailsElement}>
-                      <View style={styles.detailsKeyValue}>
-                        <View style={styles.detailsKeyText}>
-                          <Text
-                            style={{
-                              color: "#cfcfcf",
-                              fontSize: 10,
-                            }}
-                          >
-                            {i18n.t("sunrise")}
-                          </Text>
-                        </View>
-                        <View style={styles.detailsValueText}>
-                          <Text style={{ color: "white" }}>
-                            {MOMENT.returnHour(city.current.sunrise)}
-                          </Text>
-                        </View>
-                      </View>
-                      <View style={styles.detailsIcon}>
-                        <Feather
-                          name='sunrise'
-                          size={28}
-                          color='white'
-                          style={{ width: 30, marginBottom: 10 }}
-                        />
-                      </View>
-                    </View>
-                  </View>
-                  <View style={styles.detailsRightElement}>
-                    <View style={styles.detailsElement}>
-                      <View style={styles.detailsKeyValue}>
-                        <View style={styles.detailsKeyText}>
-                          <Text
-                            style={{
-                              color: "#cfcfcf",
-                              fontSize: 10,
-                            }}
-                          >
-                            {i18n.t("sunset")}
-                          </Text>
-                        </View>
-                        <View style={styles.detailsValueText}>
-                          <Text style={{ color: "white" }}>
-                            {MOMENT.returnHour(city.current.sunset)}
-                          </Text>
-                        </View>
-                      </View>
-                      <View style={styles.detailsIcon}>
-                        <Feather
-                          name='sunset'
-                          size={28}
-                          color='white'
-                          style={{ width: 30 }}
-                        />
-                      </View>
-                    </View>
-                  </View>
-                </View>
-              </View>
-            </LinearGradient>
-            <LinearGradient
-              colors={["#65a1e79c", "#65a1e79c", "#65a1e7de"]}
-              style={{ borderRadius: 16, marginTop: 6 }}
-            >
-              <View style={styles.chartContainer}>
-                <View style={styles.chartTopContainer}>
-                  <Text style={styles.containerTitle}>
-                    {i18n.t("humidityTitle")}
-                  </Text>
-                </View>
-                <View style={styles.chartContentContainer}>
-                  {barChartData != null ? (
-                    <BarChart
-                      data={barChartData}
-                      width={Dimensions.get("window").width - 24}
-                      height={220}
-                      fromZero={true}
-                      showValuesOnTopOfBars={true}
-                      withInnerLines={false}
-                      withHorizontalLabels={false}
-                      colors={["#65a1e79c", "#65a1e79c", "#65a1e7de"]}
-                      chartConfig={{
-                        backgroundGradientFrom: "#65a1e79c",
-                        backgroundGradientTo: "#65a1e7de",
-                        barPercentage: 0.5,
-                        color: (opacity = 1) =>
-                          `rgba(255, 255, 255, ${opacity})`,
-                        style: {
-                          borderRadius: 16,
-                        },
-                      }}
-                      style={{
-                        borderRadius: 16,
-                        paddingRight: 12,
-                      }}
-                    />
-                  ) : (
-                    <View style={styles.loader}>
-                      <ActivityIndicator color={"white"} size='large' />
-                    </View>
-                  )}
-                </View>
-              </View>
-            </LinearGradient>
-            <LinearGradient
-              colors={["#65a1e79c", "#65a1e79c", "#65a1e7de"]}
-              style={{ borderRadius: 16, marginTop: 6 }}
-            >
-              <View style={styles.alertsContainer}>
-                <View style={styles.alertListContainer}>
-                  <View
-                    style={{
-                      justifyContent: "center",
-                      flexDirection: "row",
-                      borderBottomWidth: 0.7,
-                      borderBottomColor: "#5a5858eb",
-                    }}
-                  >
-                    <Text style={styles.containerDarkTitle}>
-                      {i18n.t("alerts")}
-                    </Text>
-                    <MaterialCommunityIcons
-                      name='alert-octagon'
-                      size={24}
-                      color='#ff0000c9'
-                    />
-                  </View>
-                  {city.alerts != null ? (
-                    city.alerts.map((alert, index) => {
-                      return (
-                        <View style={styles.alertElement}>
-                          <View style={styles.alertEventContainer}>
-                            <Text
-                              style={{
-                                fontWeight: "bold",
-                                maxWidth: 400,
-                                fontSize: 20,
-                              }}
-                            >
-                              {alert.event}
-                            </Text>
-                            <View style={styles.durationContainer}>
-                              <MaterialCommunityIcons
-                                name='timer-sand'
-                                size={24}
-                                color='#1a151ebf'
-                              />
-                              <View style={styles.durationElementContainer}>
-                                <Text style={styles.durationElementStyle}>
-                                  {MOMENT.returnDayName(alert.start)}{" "}
-                                  {MOMENT.returnDate(alert.start)}{" "}
-                                </Text>
-                                <Text
-                                  style={{
-                                    fontSize: 10,
-                                    alignSelf: "flex-end",
-                                    fontStyle: "italic",
-                                  }}
-                                >
-                                  {MOMENT.returnHour(alert.start)}
-                                </Text>
-                              </View>
-                              <MaterialCommunityIcons
-                                name='arrow-right-bold'
-                                size={24}
-                                color='#1a151ebf'
-                              />
-                              <View style={styles.durationElementContainer}>
-                                <Text style={styles.durationElementStyle}>
-                                  {MOMENT.returnDayName(alert.end)}{" "}
-                                  {MOMENT.returnDate(alert.end)}{" "}
-                                </Text>
-                                <Text
-                                  style={{
-                                    fontSize: 10,
-                                    alignSelf: "flex-end",
-                                    fontStyle: "italic",
-                                  }}
-                                >
-                                  {MOMENT.returnHour(alert.end)}
-                                </Text>
-                              </View>
-                            </View>
-                          </View>
-
-                          <View style={styles.alertDescriptionContainer}>
-                            <Text>{alert.description}</Text>
-                          </View>
-                        </View>
-                      );
-                    })
-                  ) : (
-                    <View style={{ marginVertical: 6 }}>
-                      <Text style={styles.containerDarkTitle}>
-                        {i18n.t("noAlerts")}
-                      </Text>
-                    </View>
-                  )}
-                </View>
-              </View>
-            </LinearGradient>
+            <SevenDays daily={city.daily}></SevenDays>
+            <Barchart barChartData={barChartData}></Barchart>
+            <Details city={city}></Details>
+            <Alerts city={city}></Alerts>
           </View>
         )}
       </ScrollView>
@@ -536,11 +232,6 @@ const styles = StyleSheet.create({
     marginTop: 80,
     marginHorizontal: 12,
   },
-  cityHeader: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-  },
   dateTimeContainer: {
     flexDirection: "row",
     justifyContent: "flex-end",
@@ -558,57 +249,9 @@ const styles = StyleSheet.create({
   currentWeather: {
     flexDirection: "row",
   },
-  forecastContainer: {
-    paddingVertical: 12,
-    height: 120,
-    padding: 20,
-  },
-  chartContainer: {
-    height: 300,
-    justifyContent: "center",
-    width: 1200,
-    alignSelf: "center",
-    marginTop: 16,
-  },
-  alertsContainer: {
-    backgroundColor: "#ffffffe6",
-    borderRadius: 16,
-    marginBottom: 80,
-  },
-  alertListContainer: {
-    marginHorizontal: 16,
-    marginTop: 16,
-  },
-  alertElement: {
-    marginVertical: 6,
-    borderBottomWidth: 0.5,
-    borderBottomColor: "#47474759",
-    marginBottom: 6,
-  },
-  alertEventContainer: {
-    flexDirection: "column",
-  },
-  alertDescriptionContainer: {
-    maxWidth: 320,
-    alignSelf: "flex-start",
-    marginLeft: 12,
-    marginTop: 12,
-    marginBottom: 12,
-  },
   updateText: {
     color: "white",
     fontSize: 8,
-  },
-  containerTitle: {
-    color: "#ffffffb3",
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  containerDarkTitle: {
-    color: "#4d4c4cb8",
-    fontWeight: "bold",
-    fontSize: 16,
-    marginBottom: 10,
   },
   favIcon: {
     backgroundColor: "transparent",
@@ -622,112 +265,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 50,
-  },
-  forecastElement: {
-    flex: 1,
-    marginBottom: 10,
-    alignItems: "center",
-    width: 80,
-  },
-  elementIcon: {
-    width: 36,
-    height: 36,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#382424f0",
-    textShadowColor: "#000000",
-    textShadowRadius: 4,
-    textShadowOffset: { width: 1, height: 1 },
-    color: "white",
-  },
-  elementText: {
-    fontSize: 10,
-    textShadowColor: "#000000",
-    textShadowRadius: 2,
-    textShadowOffset: { width: 0.5, height: 0.5 },
-    color: "#e0e0e0",
-    textAlign: "center",
-  },
-  forecastDay: {
-    fontSize: 14,
-    textShadowColor: "#000000",
-    textShadowRadius: 2,
-    textShadowOffset: { width: 0.5, height: 0.5 },
-    color: "white",
-    textAlign: "center",
-  },
-  iconInput: {
-    marginHorizontal: 16,
-    fontWeight: "bold",
-    textShadowColor: "#000000",
-    textShadowRadius: 6,
-    textShadowOffset: { width: 0, height: 1 },
-  },
-  detailsContainer: {
-    height: 126,
-    marginTop: 16,
-  },
-  detailsTopContainer: {
-    height: 20,
-    justifyContent: "center",
-    alignContent: "center",
-    marginLeft: 12,
-  },
-  detailsContentContainer: {
-    flexWrap: "wrap",
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  detailsElement: {
-    height: 50,
-    width: 170,
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  detailsLeftElement: {
-    borderTopWidth: 0.5,
-    borderColor: "white",
-  },
-  detailsRightElement: {
-    borderTopWidth: 0.5,
-    borderLeftWidth: 0.5,
-    borderColor: "white",
-  },
-  detailsKeyValue: {
-    marginLeft: 32,
-    marginTop: 6,
-  },
-  detailsIcon: {
-    height: 36,
-    width: 24,
-    marginTop: 8,
-    marginRight: 16,
-  },
-  chartContainer: {
-    height: 240,
-    marginTop: 16,
-  },
-  chartTopContainer: {
-    height: 20,
-    justifyContent: "center",
-    alignContent: "center",
-    marginLeft: 12,
-  },
-  chartContentContainer: {
-    justifyContent: "center",
-  },
-  durationContainer: {
-    flexDirection: "row",
-    alignSelf: "flex-end",
-    marginTop: 10,
-  },
-  durationElementContainer: {
-    marginHorizontal: 6,
-  },
-  durationElementStyle: {
-    color: "#1a151ebf",
-    fontWeight: "bold",
   },
 });

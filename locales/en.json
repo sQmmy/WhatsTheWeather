@@ -47,7 +47,7 @@
   "viewCityWeather": "View city weather",
   "details": "Details",
   "feelsLike": "Feels like",
-  "humidityTitle": "Humidity % over the week",
+  "humidityTitle": "Probability of precipitations in % for the 48 next hours",
   "sunrise": "Sunrise",
   "sunset": "Sunset",
   "N": "North",
@@ -60,5 +60,6 @@
   "NW": "North-West",
   "alerts": "Alerts",
   "noAlerts": "No alerts for this city",
-  "noDataInFav": "No cities have been marked by the user yet"
+  "noDataInFav": "No cities have been marked by the user yet",
+  "minMaxSevenDays": "Min/max temperature for seven days"
 }

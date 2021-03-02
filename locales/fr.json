@@ -47,7 +47,7 @@
   "viewCityWeather": "Météo de la ville",
   "details": "Détails",
   "feelsLike": "Ressenti",
-  "humidityTitle": "Humidité en % sur une semaine",
+  "humidityTitle": "Probabilité de précipitations en % pour 48 heures ",
   "sunrise": "Lever du soleil",
   "sunset": "Coucher du soleil",
   "N": "Nord",
@@ -60,5 +60,6 @@
   "NW": "Nord-Ouest",
   "alerts": "Alertes",
   "noAlerts": "Pas d'alerte(s) émise(s) par cette ville",
-  "noDataInFav": "Vous n'avez pas encore ajouté de ville(s) à vos favoris"
+  "noDataInFav": "Vous n'avez pas encore ajouté de ville(s) à vos favoris",
+  "minMaxSevenDays": "Température min/max sur une semaine"
 }

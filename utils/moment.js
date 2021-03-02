@@ -1,6 +1,5 @@
 import moment from "moment";
 import i18n from "i18n-js";
-import { unix } from "moment";
 
 export const returnDate = (timestamp) => {
   return moment.unix(timestamp).format("DD/MM");
@@ -10,8 +9,11 @@ export const returnDateTime = (timestamp) => {
   return moment.unix(timestamp).format("DD/MM HH:mm");
 };
 
-export const returnHour = (timestamp) => {
-  return moment.unix(timestamp).format("HH:mm");
+export const returnHour = (timestamp, timezone_offset) => {
+  return moment
+    .unix(timestamp + timezone_offset)
+    .subtract(1, "h")
+    .format("HH:mm");
 };
 
 export const isADayAfter = (input) => {

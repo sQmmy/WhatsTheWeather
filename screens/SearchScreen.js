@@ -131,6 +131,7 @@ const SearchScreen = ({ language, unit, navigation, favCities }) => {
                 placeholderTextColor={"#9c9c9ccc"}
                 style={styles.input}
                 onChangeText={(text) => setCityName(text)}
+                onSubmitEditing={searchCities}
               />
             </View>
             <View style={styles.elementInput}>
