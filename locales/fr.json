@@ -5,7 +5,7 @@
   "countryCodeInput": "Code postal",
   "searchButton": "Rechercher",
   "locateButton": "Localisez-moi",
-  "resultsHeader": "Résultats",
+  "resultsHeader": "Résultat",
   "apiError": "Impossible de récupérer les données",
   "menuTopSearch": "Recherche",
   "menuTopFav": "Favoris",

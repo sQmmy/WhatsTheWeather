@@ -5,7 +5,7 @@
   "countryCodeInput": "Country code",
   "searchButton": "Search",
   "locateButton": "Locate me",
-  "resultsHeader": "Results",
+  "resultsHeader": "Result",
   "apiError": "Error while fetching data",
   "menuTopSearch": "Search",
   "menuTopFav": "Followed",
