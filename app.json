@@ -24,7 +24,12 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.bauqueGeoffrey.whatsTheWeather",
-      "versionCode": 1
+      "versionCode": 1,
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyCH8L87O_8AmBuJzb79qRR_mPvTbCTyeNs"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
